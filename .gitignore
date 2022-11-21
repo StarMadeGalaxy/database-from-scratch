@@ -1,0 +1,27 @@
+# Object files
+*.obj
+
+# Visual Studio Solution
+*.sln
+
+# Linker output
+*.ilk
+*.exp
+*.dll
+
+# Executables
+*.exe
+
+# Debug files
+*.pdb
+
+# RemedyBG files
+*.rdbg
+
+# Build directory
+code/cpp_version
+build/
+
+CommandLineFPS.cpp
+cpp_snake.cpp
+4CODER_HIGHLIGHT_TRASH.cpp
