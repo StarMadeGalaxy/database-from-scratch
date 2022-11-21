@@ -71,7 +71,7 @@ static void guest_text()
     puts("CREATED BY VIACHASLAU ILYUK BSUIR 022402");
     puts("FOR LEARNING PURPOSES AND TO COMPLETE TRPOSU");
     puts("LABORATORY WORK IN UNIVERSITY");
-    printf("%s %s\n", __DATE__, __TIME__);
+    printf("Compiled at: %s %s\n", __DATE__, __TIME__);
 }
 
 

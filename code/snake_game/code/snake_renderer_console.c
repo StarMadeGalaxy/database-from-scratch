@@ -39,14 +39,12 @@ SRC_API ConsoleRenderer* console_renderer_create(u16 screen_height,
     renderer->size.width = screen_width;
 #if defined(_WIN32) 
     renderer->console_handler = GetStdHandle(STD_OUTPUT_HANDLE);
-    
+    console_cursor_hide(renderer);
     CONSOLE_SCREEN_BUFFER_INFO cbsi;
     GetConsoleScreenBufferInfo(renderer->console_handler, &cbsi);
-    
-    renderer->cbsi.dwCursorPosition.X = 0;
-    renderer->cbsi.dwCursorPosition.Y += 1;
-    
-    console_cursor_hide(renderer);
+    renderer->renderer_cbsi = cbsi;
+    renderer->renderer_cbsi.dwCursorPosition.X = 0;
+    renderer->renderer_cbsi.dwCursorPosition.Y += 1;
 #endif // defined(_WIN_32)
     return renderer;
 }
@@ -119,7 +117,7 @@ SRC_API void console_cursor_begin_move(ConsoleRenderer* renderer)
 {
 #if defined(_WIN32)
     SetConsoleCursorPosition(renderer->console_handler,
-                             renderer->cbsi.dwCursorPosition);
+                             renderer->renderer_cbsi.dwCursorPosition);
 #endif // defined(_WIN32)
 }
 

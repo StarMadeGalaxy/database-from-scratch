@@ -2,7 +2,12 @@
 static __declspec;
 #define dllexport
 typedef size_t;
+typedef int64_t;
 void rand();
+void perror();
+void printf();
+void puts();
+void putc();
 void malloc();
 void free();
 void GetCursorPos();
