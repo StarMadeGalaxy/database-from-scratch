@@ -7,7 +7,8 @@ patterns = {
 	"*.h",
 	"*.bat",
 	"*.sh",
-	"*.4coder"
+	"*.4coder",
+	"*.cpp"
 };
 
 blacklist_patterns = {
@@ -41,10 +42,18 @@ commands = {
 		.save_dirty_files = true,
    	 .win = "run.bat",
 	},
+
+	.debug = { 
+		.out = "*debug*", 
+		.footer_panel = true, 
+		.save_dirty_files = true,
+   	 .win = "debug.bat",
+	},
 };
 
 fkey_command = {
 	.F1 = "run",
-	.F2 = "build"
+	.F2 = "build",
+	.F3 = "debug"
 };
 	

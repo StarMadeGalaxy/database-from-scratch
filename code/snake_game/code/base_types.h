@@ -20,7 +20,7 @@ typedef signed char b8;
 typedef float f32;
 typedef double f64;
 
-#define function static
+
 #define internal static
 #define global static
 #define local static

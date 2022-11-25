@@ -8,10 +8,10 @@ SET SNAKE_BUILD_OPTIONS=/DRELEASE_MODE /DGUI_DISABLED /DSNAKE_DOUBLY_LINKED_LIST
 SET DB_ENTRY=%SRC%\code\database_entry_point.c
 SET SNAKE_RENDERER=%SRC%\code\snake_game\code\snake_renderer_console.c
 
-SET CL_OPTS=/Zi /W3 /nologo /Od
+SET CL_OPTS=/Zi /W3 /nologo /Od /std:c11
 SET COMMON_LINK_FLAGS=/opt:ref user32.lib snake_renderer_console.lib
 :: For snake game
-SET BUILD_OPTIONS=/DRELEASE_MODE /DGUI_DISABLED /DSNAKE_DOUBLY_LINKED_LIST 
+SET BUILD_OPTIONS=/DRELEASE_MODE /DGUI_DISABLED /DSNAKE_DOUBLY_LINKED_LIST /D_CRT_SECURE_NO_WARNINGS /DDB_DEBUG
 
 IF NOT EXIST bulid MKDIR build
 PUSHD build
@@ -25,7 +25,7 @@ cl %BUILD_OPTIONS% %DB_ENTRY% %CL_OPTS% %ENTRY_FILE% /link %COMMON_LINK_FLAGS%
 del *.ilk
 del *.exp
 del *.lib
-del *.pdb
+:: del *.pdb
 del *.obj
 
 POPD

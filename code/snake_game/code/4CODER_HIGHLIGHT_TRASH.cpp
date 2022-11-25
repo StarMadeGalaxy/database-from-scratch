@@ -4,6 +4,18 @@ static __declspec;
 typedef size_t;
 typedef int64_t;
 void rand();
+void memcpy();
+void fflush();
+void strncmp();
+void strtok();
+void atoi();
+void strcpy();
+void strlen();;
+void sscanf();
+void strcmp();
+void exit();
+void system();
+void fprintf();
 void perror();
 void printf();
 void puts();
@@ -16,6 +28,11 @@ void SetConsoleCursorPosition();
 struct CONSOLE_CURSOR_INFO;
 struct COORD:
 struct POINT:
+typedef FILE;
+static stdout;
+static stdin;;
+static stderr;;
+
 void GetConsoleCursorInfo();
 void SetConsoleCursorInfo();
 typedef SHORT;

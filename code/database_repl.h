@@ -7,17 +7,22 @@
 #include <stdio.h>
 
 #include "getline.h"
+#include "database_base_types.h"
 
 
 typedef struct InputBuffer
 {
     char* buffer;
     size_t buffer_size;
+#if defined(__linux__)
+    ssize_t input_size;
+#else
     int64_t input_size;
+#endif // defined(__linux__)
 } InputBuffer;
 
 
-static InputBuffer* new_input_buffer()
+internal InputBuffer* new_input_buffer()
 {
     InputBuffer* input_buffer = (InputBuffer*)malloc(sizeof(InputBuffer));
     
@@ -34,7 +39,7 @@ static InputBuffer* new_input_buffer()
 }
 
 
-static void read_input(InputBuffer* input_buffer)
+internal void read_input(InputBuffer* input_buffer)
 {
     int64_t bytes_read = (int64_t)getline(&(input_buffer->buffer), &(input_buffer->buffer_size), stdin);
     if (bytes_read <= 0)
@@ -48,24 +53,26 @@ static void read_input(InputBuffer* input_buffer)
 }
 
 
-static void close_input_buffer(InputBuffer* input_buffer)
+internal void close_input_buffer(InputBuffer* input_buffer)
 {
     free(input_buffer->buffer);
     free(input_buffer);
 }
 
 
-static void input_buffer_debug_print(InputBuffer* input_buffer)
+internal void input_buffer_debug_print(InputBuffer* input_buffer)
 {
+#if defined(DB_DEBUG)
     puts("\n----INPUT BUFFER DEBUG INFO----");
     printf("\nBuffer: %p", input_buffer->buffer);
     printf("\nBuffer size: %zu", input_buffer->buffer_size);
     printf("\nInput size: %zu", input_buffer->input_size);
     puts("\n-------------------------------\n");
+#endif // defined(DB_DEBUG)
 }
 
 
-static void guest_text()
+internal void guest_text()
 {
     puts("HANDMADE DATABASE FROM SCRATCH");
     puts("CREATED BY VIACHASLAU ILYUK BSUIR 022402");
@@ -75,7 +82,7 @@ static void guest_text()
 }
 
 
-static void print_promt()
+internal void print_promt()
 {
     fputs("\nhandmade_db> ", stdout);
 }
