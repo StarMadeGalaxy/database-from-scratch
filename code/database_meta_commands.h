@@ -2,6 +2,7 @@
 #define _META_COMMANDS_H
 
 #include "snake_game\code\snake_game.h"
+#include "database_package_table.h"
 
 
 typedef enum
@@ -11,17 +12,18 @@ typedef enum
 } MetaCommandResult;
 
 
-MetaCommandResult do_meta_command(InputBuffer* input_buffer)
+MetaCommandResult do_meta_command(InputBuffer* input_buffer, Table* table)
 {
     if (strcmp(input_buffer->buffer, "$exit") == 0)
     {
+        close_input_buffer(input_buffer);
+        free_table(table);
         exit(EXIT_SUCCESS);
-        return META_COMMAND_SUCCESS;
     }
     else if (strcmp(input_buffer->buffer, "$ilyuk_game") == 0)
     {
+        close_input_buffer(input_buffer);
         snake_game_start();
-        fflush(stdout);
         return META_COMMAND_SUCCESS;
     }
     else if (strcmp(input_buffer->buffer, "$cls") == 0)
