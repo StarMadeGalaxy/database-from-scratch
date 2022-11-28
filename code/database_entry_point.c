@@ -2,13 +2,23 @@
 //warning C5105: macro expansion producing 'defined' has undefined behavior
 #pragma warning(disable : 5105)
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
+// Unity build?
+#include "laboratory_work\post_office.c"
+#include "laboratory_work\post_package.c"
+#include "database_package_row.c"
+#include "database_meta_commands.c"
+#include "database_statement.c"
+#include "database_repl.c"
+#include "database_package_table.c"
+
+
+#include "database_statement.h"
 #include "database_repl.h"
-#include "database_meta_commands.h"
-#include "database_statament.h"
-#include "database_package_table.h"
+
 
 int main(int argc, char* argv[])
 {
@@ -24,7 +34,7 @@ int main(int argc, char* argv[])
         
         if (input_buffer->buffer[0] == '$')
         {
-            switch (do_meta_command(input_buffer, table))
+            switch (do_meta_command(input_buffer))
             {
                 case META_COMMAND_SUCCESS:
                 {

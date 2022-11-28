@@ -33,4 +33,6 @@ include all of the source files */
 #include "snake_logic.c"
 #include "snake_game.c"
 
+internal void snake_game_start();
+
 #endif //SNAKE_GAME_H

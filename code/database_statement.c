@@ -1,39 +1,4 @@
-#ifndef _DATABASE_STATEMENT_H
-#define _DATABASE_STATEMENT_H
-
-#include "database_base_types.h"
-#include "database_package_row.h"
-
-
-typedef enum PrepareStatementResult
-{
-    PREPARE_STATEMENT_SUCCESS,
-    PREPARE_SYNTAX_ERROR,
-    PREPARE_UNRECOGNIZED_STATEMENT,
-    PREPARE_STRING_TOO_LONG,
-    PREPARE_NEGATIVE_ID
-} PrepareStatementResult;
-
-
-typedef enum StatementType
-{
-    STATEMENT_INSERT,
-    STATEMENT_SELECT,
-    STATEMENT_UNRECOGNIZED
-} StatementType;
-
-
-typedef struct Statement
-{
-    StatementType type;
-    PackageRow row_to_insert;
-} Statement;
-
-
-typedef enum ExecuteResult
-{
-    EXECUTE_TABLE_FULL, EXECUTE_SUCCESS
-} ExecuteResult;
+#include "database_statement.h"
 
 
 internal PrepareStatementResult prepare_insert(InputBuffer* input_buffer, Statement* statement)
@@ -42,7 +7,7 @@ internal PrepareStatementResult prepare_insert(InputBuffer* input_buffer, Statem
     char* id_string = strtok(NULL, " ");
     char* package_name_string = strtok(NULL, " ");
     char* package_street_string  = strtok(NULL, " ");
-    int int_id = atoi(id_string);
+    u32 int_id = atoi(id_string);
     
     if (package_street_string == NULL ||
         package_name_string == NULL ||
@@ -128,5 +93,3 @@ internal ExecuteResult execute_statement(Statement* statement, Table* table)
     }
     return STATEMENT_UNRECOGNIZED; 
 }
-
-#endif /* _DATABASE_STATEMENT_H */ 

@@ -25,7 +25,6 @@ typedef double f64;
 #define MB(x)   ((u64)(1024 * KB(x)))
 #define GB(x)   ((u64)(1024 * MB(x)))
 
-
 #define internal static
 #define global static
 #define local static

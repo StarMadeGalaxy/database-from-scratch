@@ -6,13 +6,9 @@
 #define MAX_STREET_NUMBER 3
 #define MAX_STREET_NAME_SIZE 64
 
+#include "database_base_types.h"
 
-typedef struct PostOffice
-{
-    u32 post_office_number;
-    u32 packages_number;
-    char streets_list[MAX_STREET_NUMBER][MAX_STREET_NAME_SIZE];
-} PostOffice;
+typedef struct PostOffice PostOffice;
 
 
 #endif //POST_OFFICE_H
