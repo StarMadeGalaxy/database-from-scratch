@@ -10,6 +10,12 @@
 #include "database_package_table.h" // for TABLE_MAX_PAGES
 
 
+#define PAGE_SIZE KB(4)
+#define TABLE_MAX_PAGES 100
+#define ROWS_PER_PAGE ((u64)(PAGE_SIZE / PACKAGE_ROW_SIZE))
+#define TABLE_MAX_ROWS (ROWS_PER_PAGE * TABLE_MAX_PAGES)
+
+
 #if defined(_WIN32)
 #   define FILE_DESCRIPTOR HANDLE
 #else 

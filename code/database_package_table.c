@@ -19,7 +19,7 @@ internal Table* db_open(const char* filename)
 }
 
 
-internal db_close(Table* table)
+internal void db_close(Table* table)
 {
     Pager* pager = table->pager;
     u64 num_full_pages = table->num_rows / ROWS_PER_PAGE;
@@ -32,21 +32,33 @@ internal db_close(Table* table)
         }
         // pager_flush();
         free(pager->pages[i]);
-        pager->pages[i] == NULL;
+        pager->pages[i] = NULL;
     }
-#if defined(_WIN32)
     
-#endif // defined(_WIN32)
-    free(table->pager);
-    free(table);
-}
-
-
-internal void free_table(Table* table)
-{
+    u64 num_additional_rows = table->num_rows % ROWS_PER_PAGE;
+    if (num_additional_rows > 0)
+    {
+        // TODO(Venci): Tomorrow go from there
+        u64 last_page = num_full_pages;
+    }
+    
     for (u64 i = 0; i < TABLE_MAX_PAGES; i++)
     {
-        free(table->pages[i]);
+        void* page = pager->pages[i];
+        if (page != NULL)
+        {
+            free(page);
+            pager->pages[i] = NULL;
+        }
     }
+#if defined(_WIN32)
+    if (!CloseHandle(pager->file_handler))
+    {
+        fprintf(stderr, "Error while closing the table. Error: %d", GetLastError());
+        exit(EXIT_FAILURE);
+    }
+#endif // defined(_WIN32)
+    free(pager);
     free(table);
 }
+

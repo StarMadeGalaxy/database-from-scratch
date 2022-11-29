@@ -1,5 +1,5 @@
 #if defined(_WIN32)
-#include <Windows.h>"
+#include <Windows.h>
 #endif // defined(_WIN32)
 
 #include <stdio.h>
@@ -15,8 +15,8 @@ internal Pager* pager_open(const char* filename)
                                                GENERIC_READ | GENERIC_WRITE, 
                                                0,
                                                NULL, 
-                                               OPEN_ALWAYS,
-                                               NULL,
+                                               OPEN_ALWAYS, 
+                                               0,
                                                NULL);
     
     if (file_handler == INVALID_HANDLE_VALUE)
@@ -26,7 +26,7 @@ internal Pager* pager_open(const char* filename)
     }
     
     LARGE_INTEGER li_file_size;
-    if (!GetFileSizeEx(db_handle, &li_file_size))
+    if (!GetFileSizeEx(file_handler, &li_file_size))
     {
         fprintf(stderr, "Error while getting size of the database table. Error: %d", GetLastError());
         CloseHandle(file_handler);
@@ -41,7 +41,7 @@ internal Pager* pager_open(const char* filename)
     
     for (u32 i = 0; i < TABLE_MAX_PAGES; i++)
     {
-        pager->pages[i] = NULL:
+        pager->pages[i] = NULL;
     }
     return pager;
 }
@@ -51,7 +51,7 @@ internal void* get_page(Pager* pager, u64 page_num)
 {
     if (page_num >= TABLE_MAX_PAGES)
     {
-        fprintf(stderr, "Fetching error. Page number (%llU) is out of bound.\n", page_num);
+        fprintf(stderr, "Fetching error. Page number (%llu) is out of bound.\n", page_num);
         exit(EXIT_FAILURE);
     }
     u64 num_pages = pager->file_size / PAGE_SIZE;
@@ -77,7 +77,7 @@ internal void* get_page(Pager* pager, u64 page_num)
             }
             DWORD bytes_read;
             
-            if (!ReadFile(pager->file_handler, (LPVOID)page, PAGE_SIZE, &bytes_read), NULL))
+            if (!ReadFile(pager->file_handler, (LPVOID)page, PAGE_SIZE, &bytes_read, NULL))
             {
                 fprintf(stderr, "Error while reading database page. Error: %d", GetLastError());
                 exit(EXIT_FAILURE);
@@ -85,7 +85,8 @@ internal void* get_page(Pager* pager, u64 page_num)
             
             if (bytes_read != PAGE_SIZE)
             {
-                // TODO(Venci): Handle bytes_read != PAGE_SIZE
+                fprintf(stderr,"Read page size is not equal to page size.");
+                exit(EXIT_FAILURE);
             }
 #endif // defined(_WIN32)
         }
