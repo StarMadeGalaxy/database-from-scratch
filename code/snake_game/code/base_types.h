@@ -33,7 +33,8 @@ typedef double f64;
 #define Assert(expression)
 
 #if defined(__cplusplus) && defined(_BITSET_)
-# define BITSET_MSB(type) (std::bitset<(BIT_AMOUNT(type))>(MSB(type)))
+#   define BITSET_MSB(type) (std::bitset<(BIT_AMOUNT(type))>(MSB(type)))
+#   define BITSET(type, value) (std::bitset<BIT_AMOUNT(type)>(value))
 #endif /* defined(__cplusplus) && defined(_BITSET_) */
 
 #endif //BASE_TYPES_H

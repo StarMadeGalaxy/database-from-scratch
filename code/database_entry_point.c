@@ -2,29 +2,31 @@
 //warning C5105: macro expansion producing 'defined' has undefined behavior
 #pragma warning(disable : 5105)
 
-#include <stdlib.h>
+#include <stdlib.h> // EXIT_FAILURE, EXIT_SUCCESS
 #include <stdio.h>
 #include <string.h>
 
 // Unity build?
+#include "database_package_table.c"
 #include "laboratory_work\post_office.c"
 #include "laboratory_work\post_package.c"
 #include "database_package_row.c"
 #include "database_meta_commands.c"
 #include "database_statement.c"
 #include "database_repl.c"
-#include "database_package_table.c"
-
-
-#include "database_statement.h"
-#include "database_repl.h"
+#include "database_pager.c"
 
 
 int main(int argc, char* argv[])
 {
+#if !defined(_WIN32) && !defined(__linux__)
+    fprintf(stderr, "Platform is not supported!\n");
+    exit(EXIT_FAILURE);
+#endif //!defined(_WIN32) && !defined(__linux__)
+    
     guest_text();
     InputBuffer* input_buffer = new_input_buffer();
-    Table* table = new_table();
+    Table* table = db_open("test_database.txt");
     
     /* Main loop */
     for (;;)
@@ -34,7 +36,7 @@ int main(int argc, char* argv[])
         
         if (input_buffer->buffer[0] == '$')
         {
-            switch (do_meta_command(input_buffer))
+            switch (do_meta_command(input_buffer, table))
             {
                 case META_COMMAND_SUCCESS:
                 {

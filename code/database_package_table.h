@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include "database_base_types.h"
 #include "database_package_row.h"
+#include "database_pager.h"
 
 #define PAGE_SIZE KB(4)
 #define TABLE_MAX_PAGES 100
@@ -16,11 +17,11 @@
 typedef struct Table
 {
     u64 num_rows;
-    void* pages[TABLE_MAX_PAGES];
+    Pager* pager;
 } Table;
 
 
-
+internal void db_close();
 internal Table* new_table();
 internal void free_table(Table* table);
 

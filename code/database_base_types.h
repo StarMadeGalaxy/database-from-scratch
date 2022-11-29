@@ -31,4 +31,5 @@ typedef double f64;
 
 #define StructAttrSize(type, attribute) (sizeof(((type*)0)->attribute))
 
+
 #endif //DB_BASE_TYPES_H

@@ -1,20 +1,19 @@
 #include "database_meta_commands.h"
 #include "database_package_table.h" // for Table and free_table()
-#include "snake_game\code\snake_game.h" // for snake_game_start()
+//#include "snake_game\code\snake_game.h" // for snake_game_start()
 
 
-internal MetaCommandResult do_meta_command(InputBuffer* input_buffer)
+internal MetaCommandResult do_meta_command(InputBuffer* input_buffer, Table* table)
 {
     if (strcmp(input_buffer->buffer, "$exit") == 0)
     {
         close_input_buffer(input_buffer);
-        //free_table(table);
+        db_close(table);
         exit(EXIT_SUCCESS);
     }
     else if (strcmp(input_buffer->buffer, "$ilyuk_game") == 0)
     {
-        close_input_buffer(input_buffer);
-        snake_game_start();
+        //snake_game_start();
         return META_COMMAND_SUCCESS;
     }
     else if (strcmp(input_buffer->buffer, "$cls") == 0)
