@@ -38,8 +38,11 @@ internal void db_close(Table* table)
     u64 num_additional_rows = table->num_rows % ROWS_PER_PAGE;
     if (num_additional_rows > 0)
     {
-        // TODO(Venci): Tomorrow go from there
         u64 last_page = num_full_pages;
+        if (pager->pages[last_page] != NULL)
+        {
+            
+        }
     }
     
     for (u64 i = 0; i < TABLE_MAX_PAGES; i++)

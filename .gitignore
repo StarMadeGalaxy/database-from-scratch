@@ -18,6 +18,10 @@
 # RemedyBG files
 *.rdbg
 
+# Visual Studio Code
+.vscode/
+
+
 # Build directory
 code/cpp_version
 build/
