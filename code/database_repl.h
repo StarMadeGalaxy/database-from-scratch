@@ -10,7 +10,7 @@
 #include "database_base_types.h"
 
 
-typedef struct InputBuffer
+typedef struct _InputBuffer
 {
     char* buffer;
     size_t buffer_size;

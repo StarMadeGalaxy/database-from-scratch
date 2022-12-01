@@ -4,7 +4,7 @@
 #include "database_repl.h"    // for InputBuffer
 
 
-typedef enum MetaCommandResult
+typedef enum _MetaCommandResult
 {
     META_COMMAND_SUCCESS,
     META_COMMAND_UNRECOGNIZED_COMMAND

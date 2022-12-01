@@ -2,6 +2,7 @@
 //warning C5105: macro expansion producing 'defined' has undefined behavior
 #pragma warning(disable : 5105)
 
+
 #include <stdlib.h> // EXIT_FAILURE, EXIT_SUCCESS
 #include <stdio.h>
 #include <string.h>
@@ -16,6 +17,7 @@
 #include "database_repl.c"
 #include "database_pager.c"
 
+#include "database_debug.c"
 
 int main(int argc, char* argv[])
 {
@@ -23,10 +25,10 @@ int main(int argc, char* argv[])
     fprintf(stderr, "Platform is not supported!\n");
     exit(EXIT_FAILURE);
 #endif //!defined(_WIN32) && !defined(__linux__)
-    
     guest_text();
+    debug_print_package_row();
     InputBuffer* input_buffer = new_input_buffer();
-    Table* table = db_open("test_database.txt");
+    Table* table = db_open("test_database.ilyukdb");
     
     /* Main loop */
     for (;;)

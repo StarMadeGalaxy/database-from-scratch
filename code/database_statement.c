@@ -1,4 +1,5 @@
 #include "database_statement.h"
+#include "database_repl.h"
 
 
 internal PrepareStatementResult prepare_insert(InputBuffer* input_buffer, Statement* statement)
@@ -7,7 +8,6 @@ internal PrepareStatementResult prepare_insert(InputBuffer* input_buffer, Statem
     char* id_string = strtok(NULL, " ");
     char* package_name_string = strtok(NULL, " ");
     char* package_street_string  = strtok(NULL, " ");
-    u32 int_id = atoi(id_string);
     
     if (package_street_string == NULL ||
         package_name_string == NULL ||
@@ -24,6 +24,9 @@ internal PrepareStatementResult prepare_insert(InputBuffer* input_buffer, Statem
     {
         return PREPARE_STRING_TOO_LONG;
     }
+
+    // Assert thrown when id_string is NULL so place it after condition
+    i32 int_id = atoi(id_string);
     if (int_id < 0)
     {
         return PREPARE_NEGATIVE_ID;

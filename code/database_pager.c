@@ -43,6 +43,8 @@ internal Pager* pager_open(const char* filename)
     {
         pager->pages[i] = NULL;
     }
+
+    debug_open_pager(pager);
     return pager;
 }
 
@@ -60,7 +62,7 @@ internal void* get_page(Pager* pager, u64 page_num)
     {
         void* page = malloc(PAGE_SIZE);
         // Serve space for the part of the file
-        if (pager->file_size % PAGE_SIZE == 0)
+        if (pager->file_size % PAGE_SIZE != 0)
         {
             num_pages += 1;
         }
@@ -72,27 +74,60 @@ internal void* get_page(Pager* pager, u64 page_num)
             
             if (!SetFilePointerEx(pager->file_handler, page_offset, NULL, FILE_BEGIN))
             {
-                fprintf(stderr, "Error while fetching database page. Error:%d", GetLastError());
+                fprintf(stderr, "Error while fetching database page. Error:%d\n", GetLastError());
                 exit(EXIT_FAILURE);
             }
             DWORD bytes_read;
             
             if (!ReadFile(pager->file_handler, (LPVOID)page, PAGE_SIZE, &bytes_read, NULL))
             {
-                fprintf(stderr, "Error while reading database page. Error: %d", GetLastError());
+                fprintf(stderr, "Error while reading database page. Error: %d\n", GetLastError());
                 exit(EXIT_FAILURE);
             }
             
-            if (bytes_read != PAGE_SIZE)
-            {
-                fprintf(stderr,"Read page size is not equal to page size.");
-                exit(EXIT_FAILURE);
-            }
+            // if (bytes_read != PAGE_SIZE)
+            // {
+            //     fprintf(stderr, "Read page size is not equal to page size.\n");
+            //     exit(EXIT_FAILURE);
+            // }
 #endif // defined(_WIN32)
         }
         pager->pages[page_num] = page;
     }
-    return pager->pages[page_num];;
+    return pager->pages[page_num];
+}
+
+
+internal void pager_flush(Pager* pager, u64 page_num, u64 size_to_flush)
+{
+    if (pager->pages[page_num] == NULL)
+    {
+        fprintf(stderr, "Error while flushing page. Page is NULL.\n");
+        exit(EXIT_FAILURE);
+    }
+
+#if defined(_WIN32)
+    LARGE_INTEGER page_offset = large_integer_cast(page_num * PAGE_SIZE);
+    
+    if (!SetFilePointerEx(pager->file_handler, page_offset, NULL, FILE_BEGIN))
+    {
+        fprintf(stderr, "Error while fetching database page. Error: %d\n", GetLastError());
+        exit(EXIT_FAILURE);
+    }
+    DWORD bytes_written;
+    
+    if (!WriteFile(pager->file_handler, (LPVOID)(pager->pages[page_num]), (DWORD)size_to_flush, &bytes_written, NULL))
+    {
+        fprintf(stderr, "Error while writing database page. Error: %d\n", GetLastError());
+        exit(EXIT_FAILURE);
+    }
+    
+    if (bytes_written != size_to_flush)
+    {
+        fprintf(stderr, "Error. Page is written partially. (bytes written != size_to_flush).\n");
+        exit(EXIT_FAILURE);
+    }
+#endif // defined(_WIN32)
 }
 
 

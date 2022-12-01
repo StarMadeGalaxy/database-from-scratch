@@ -2,9 +2,13 @@
 #include <Windows.h>
 #endif // defined(_WIN32)
 
+#include <stdio.h>
+
 #include "database_package_table.h" // for Table, ROWS_PER_PAGE
 #include "database_package_row.h"   // for PACKAGE_ROW_SIZE
 #include "database_pager.h"         // for Pager, pager_open()
+
+#include "database_debug.c"
 
 
 internal Table* db_open(const char* filename)
@@ -15,6 +19,7 @@ internal Table* db_open(const char* filename)
     table->num_rows = pager->file_size / PACKAGE_ROW_SIZE;
     table->pager = pager;
     
+    debug_open_db(filename, table->num_rows);
     return table;
 }
 
@@ -30,7 +35,7 @@ internal void db_close(Table* table)
         {
             continue;
         }
-        // pager_flush();
+        pager_flush(pager->file_handler, i, PAGE_SIZE);
         free(pager->pages[i]);
         pager->pages[i] = NULL;
     }
@@ -41,7 +46,9 @@ internal void db_close(Table* table)
         u64 last_page = num_full_pages;
         if (pager->pages[last_page] != NULL)
         {
-            
+            pager_flush(pager, last_page, num_additional_rows * PACKAGE_ROW_SIZE);
+            free(pager->pages[last_page]);
+            pager->pages[last_page] = NULL;
         }
     }
     
@@ -50,8 +57,7 @@ internal void db_close(Table* table)
         void* page = pager->pages[i];
         if (page != NULL)
         {
-            free(page);
-            pager->pages[i] = NULL;
+            free(pager->pages[i]);
         }
     }
 #if defined(_WIN32)
@@ -63,5 +69,6 @@ internal void db_close(Table* table)
 #endif // defined(_WIN32)
     free(pager);
     free(table);
+    
+    debug_close_db(table, num_full_pages, num_additional_rows);
 }
-

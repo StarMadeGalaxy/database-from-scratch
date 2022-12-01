@@ -17,8 +17,8 @@ internal void print_package_row(PackageRow* row)
 
 internal void* row_slot(Table* table, u64 row_num)
 {
-    void* page = get_page(table->pager, row_num);
     u64 page_num = row_num / ROWS_PER_PAGE;
+    void* page = get_page(table->pager, page_num);
     u64 row_offset = row_num % ROWS_PER_PAGE;
     u64 byte_offset = row_offset * PACKAGE_ROW_SIZE;
     return (void*)((u8*)page + byte_offset);
