@@ -7,6 +7,8 @@
 #include "database_pager.h"
 #include "database_package_table.h" // for TABLE_MAX_PAGES, PAGE_SIZE
 
+#include "database_debug.c"
+
 
 internal Pager* pager_open(const char* filename)
 {
@@ -71,7 +73,7 @@ internal void* get_page(Pager* pager, u64 page_num)
         {
 #if defined(_WIN32)
             LARGE_INTEGER page_offset = large_integer_cast(page_num * PAGE_SIZE);
-            
+            // Ex stands for extended, just handy version of SetFilePointer
             if (!SetFilePointerEx(pager->file_handler, page_offset, NULL, FILE_BEGIN))
             {
                 fprintf(stderr, "Error while fetching database page. Error:%d\n", GetLastError());
@@ -84,8 +86,10 @@ internal void* get_page(Pager* pager, u64 page_num)
                 fprintf(stderr, "Error while reading database page. Error: %d\n", GetLastError());
                 exit(EXIT_FAILURE);
             }
-            
-            // if (bytes_read != PAGE_SIZE)
+
+            debug_get_page(pager, page_num, bytes_read);
+            // Code below make no sense so far
+            // if (bytes_read != )
             // {
             //     fprintf(stderr, "Read page size is not equal to page size.\n");
             //     exit(EXIT_FAILURE);
@@ -127,6 +131,8 @@ internal void pager_flush(Pager* pager, u64 page_num, u64 size_to_flush)
         fprintf(stderr, "Error. Page is written partially. (bytes written != size_to_flush).\n");
         exit(EXIT_FAILURE);
     }
+
+    debug_pager_flush(pager, page_num, bytes_written, size_to_flush);
 #endif // defined(_WIN32)
 }
 

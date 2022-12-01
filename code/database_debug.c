@@ -4,6 +4,7 @@
 
 #if defined(DB_DEBUG)
 #include <stdio.h>
+#include <Windows.h>
 #include "database_pager.h"
 #include "database_package_table.h"
 #include "database_base_types.h"
@@ -37,7 +38,7 @@ internal void debug_close_db(Table* table, u64 num_full_pages, u64 num_add_row)
 #if defined(DB_DEBUG)
     fprintf(stdout, "\n+Closing database-\n");
     fprintf(stdout, "|Number of additional rows: %llu\n", num_add_row);
-    fprintf(stdout, "|     Number of full pages: %llu\n\n", num_full_pages);
+    fprintf(stdout, "|     Number of full pages: %llu\n", num_full_pages);
     fprintf(stdout, "+--------------------------------------------+\n");
     system("PAUSE");
 #endif // defined(DB_MODE)
@@ -48,8 +49,8 @@ internal void debug_print_package_row(void)
 {
 #if defined(DB_DEBUG)
     fprintf(stdout, "\n+Package row information-\n");
-    fprintf(stdout, "|Max Id size             : %zu\n", PACKAGE_ID_SIZE);
-    fprintf(stdout, "|Max package name size   : %zu\n", PACKAGE_NAME_SIZE);
+    fprintf(stdout, "|            Max Id size : %zu\n", PACKAGE_ID_SIZE);
+    fprintf(stdout, "|  Max package name size : %zu\n", PACKAGE_NAME_SIZE);
     fprintf(stdout, "|Max package street size : %zu\n", PACKAGE_STREET_SIZE);
     fprintf(stdout, "|       Package row size : %zu\n", PACKAGE_ROW_SIZE);
     fprintf(stdout, "|    Summed max row size : %zu\n", PACKAGE_ID_SIZE + PACKAGE_NAME_SIZE + PACKAGE_STREET_SIZE);
@@ -57,6 +58,29 @@ internal void debug_print_package_row(void)
     fprintf(stdout, "\n+Page information-\n");
     fprintf(stdout, "|Rows per page: %zu\n", ROWS_PER_PAGE);
     fprintf(stdout, "|Table max row: %zu\n", TABLE_MAX_ROWS);
+    fprintf(stdout, "+--------------------------------------------+\n");
+#endif // defined(DB_DEBUG)
+}
+
+
+internal void debug_get_page(Pager* pager, u64 page_num, DWORD bytes_read)
+{
+#if defined(DB_DEBUG)
+    fprintf(stdout, "\n+Get page-\n");
+    fprintf(stdout, "|Page offset : %zu\n", page_num * PAGE_SIZE);
+    fprintf(stdout, "| Bytes read : %lu\n", bytes_read);
+    fprintf(stdout, "+--------------------------------------------+\n");
+#endif // defined(DB_DEBUG)
+}
+
+
+internal void debug_pager_flush(Pager* pager, u64 page_num, DWORD bytes_written, u64 size_to_flush)
+{
+#if defined(DB_DEBUG)
+    fprintf(stdout, "\n+Pager flush-\n");
+    fprintf(stdout, "|Bytes written : %lu\n", bytes_written);
+    fprintf(stdout, "|Size to flush : %zu\n", size_to_flush);
+    fprintf(stdout, "|  Page offset : %zu\n", page_num * PAGE_SIZE);
     fprintf(stdout, "+--------------------------------------------+\n");
 #endif // defined(DB_DEBUG)
 }
