@@ -26,7 +26,6 @@ typedef struct _PackageRow
 
 
 internal void print_package_row(PackageRow* row);
-internal void* row_slot(Table* table, u64 row_num);
 internal void serialize_package_row(PackageRow* source, void* destination);
 internal void deserialize_package_row(void* source, PackageRow* destination);
 

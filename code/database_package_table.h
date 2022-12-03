@@ -16,6 +16,7 @@ typedef struct Table
 
 internal Table* new_table();
 internal void db_close(Table* table);
+internal Table* db_open(const char* filename);
 
 
 #endif //DATABASE_PACKAGE_TABLE_H

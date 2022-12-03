@@ -1,6 +1,6 @@
 /* date = September 25th 2022 2:51 am */
 
-#ifndef DB_BASE_TYPES_H
+#if !defined(DB_BASE_TYPES_H)
 #define DB_BASE_TYPES_H
 
 #include <stdint.h>
@@ -15,8 +15,6 @@ typedef uint16_t u16;
 typedef uint32_t u32;
 typedef uint64_t u64;
 
-typedef i8 b8;
-
 typedef float f32;
 typedef double f64;
 
@@ -29,7 +27,24 @@ typedef double f64;
 #define global static
 #define local static
 
-#define StructAttrSize(type, attribute) (sizeof(((type*)0)->attribute))
+// database_boolean
+typedef u8 DbBool;
 
+#define DbFalse ((DbBool)0)
+#define DbTrue ((DbBool)1)
+
+#if defined(False)
+#   undef False
+#endif // defined(False)
+
+#if defined(True)
+#   undef True
+#endif // defined(True)
+
+#define False DbFalse
+#define True DbTrue
+// database_boolean
+
+#define StructAttrSize(type, attribute) (sizeof(((type*)0)->attribute))
 
 #endif //DB_BASE_TYPES_H

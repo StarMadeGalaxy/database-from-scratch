@@ -12,6 +12,9 @@
 # Executables
 *.exe
 
+# Database files
+*.ilyukdb
+
 # Debug files
 *.pdb
 

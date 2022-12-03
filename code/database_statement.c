@@ -1,5 +1,6 @@
 #include "database_statement.h"
 #include "database_repl.h"
+#include "database_cursor.h"
 
 
 internal PrepareStatementResult prepare_insert(InputBuffer* input_buffer, Statement* statement)
@@ -39,6 +40,43 @@ internal PrepareStatementResult prepare_insert(InputBuffer* input_buffer, Statem
     return PREPARE_STATEMENT_SUCCESS;
 }
 
+
+internal ExecuteResult execute_insert(Statement* statement, Table* table)
+{
+    DbCursor* cursor = table_end(table);
+
+    PackageRow* row_to_insert = &(statement->row_to_insert);
+    serialize_package_row(row_to_insert, cursor_value(cursor));
+    table->num_rows += 1;
+
+    free(cursor);
+    return EXECUTE_SUCCESS;
+    
+}
+
+
+internal PrepareStatementResult prepare_select(InputBuffer* input_buffer, Statement* statement)
+{
+    statement->type = STATEMENT_SELECT;
+    return PREPARE_STATEMENT_SUCCESS;
+}
+
+
+internal ExecuteResult execute_select(Statement* statement, Table* table)
+{
+    DbCursor* cursor = table_start(table);
+
+    PackageRow row;
+    while (!(cursor->end_of_table))
+    {
+        deserialize_package_row(cursor_value(cursor), &row);
+        print_package_row(&row);
+        cursor_advance(cursor);
+    }
+    free(cursor);
+    return EXECUTE_SUCCESS;
+}
+
 /* kind of compiler for SQL */
 internal PrepareStatementResult prepare_statement(InputBuffer* input_buffer, Statement* statement)
 {
@@ -48,36 +86,9 @@ internal PrepareStatementResult prepare_statement(InputBuffer* input_buffer, Sta
     }
     if (strncmp(input_buffer->buffer, "SELECT", 6) == 0)
     {
-        statement->type = STATEMENT_SELECT;
-        return PREPARE_STATEMENT_SUCCESS;
+        return prepare_select(input_buffer, statement);
     }
     return PREPARE_UNRECOGNIZED_STATEMENT;
-}
-
-
-internal ExecuteResult execute_insert(Statement* statement, Table* table)
-{
-    if (table->num_rows >= TABLE_MAX_ROWS)
-    {
-        return EXECUTE_TABLE_FULL;
-    }
-    PackageRow* row_to_insert = &(statement->row_to_insert);
-    serialize_package_row(row_to_insert, row_slot(table, table->num_rows));
-    table->num_rows += 1;
-    return EXECUTE_SUCCESS;
-    
-}
-
-
-internal ExecuteResult execute_select(Statement* statement, Table* table)
-{
-    PackageRow row;
-    for (u64 i = 0; i < table->num_rows; i++)
-    {
-        deserialize_package_row(row_slot(table, i), &row);
-        print_package_row(&row);
-    }
-    return EXECUTE_SUCCESS;
 }
 
 

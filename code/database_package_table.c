@@ -3,6 +3,7 @@
 #endif // defined(_WIN32)
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "database_package_table.h" // for Table, ROWS_PER_PAGE
 #include "database_package_row.h"   // for PACKAGE_ROW_SIZE

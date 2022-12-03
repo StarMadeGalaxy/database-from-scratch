@@ -16,6 +16,7 @@
 #include "database_statement.c"
 #include "database_repl.c"
 #include "database_pager.c"
+#include "database_cursor.c"
 
 #include "database_debug.c"
 
@@ -25,10 +26,17 @@ int main(int argc, char* argv[])
     fprintf(stderr, "Platform is not supported!\n");
     exit(EXIT_FAILURE);
 #endif //!defined(_WIN32) && !defined(__linux__)
+    if (argc < 2)
+    {
+        fprintf(stderr, "Please specify the database file with .ilyukdb extension!\n");
+        exit(EXIT_FAILURE);
+    }
+
     guest_text();
-    debug_print_package_row();
     InputBuffer* input_buffer = new_input_buffer();
-    Table* table = db_open("test_database.ilyukdb");
+    Table* table = db_open(argv[1]);
+
+    debug_print_package_row();
     
     /* Main loop */
     for (;;)
@@ -46,11 +54,17 @@ int main(int argc, char* argv[])
                 }
                 case META_COMMAND_UNRECOGNIZED_COMMAND:
                 {
-                    printf("\nUnrecognized command '%s'.\n", input_buffer->buffer);
+                    fprintf(stdout, "\nUnrecognized command '%s'.\n", input_buffer->buffer);
                     continue;
+                }
+                default:
+                {
+                    fprintf(stderr, "Error. Do meta command unrecognized return value.\n");
+                    exit(EXIT_FAILURE);
                 }
             }
         }
+
         Statement statement;
         switch (prepare_statement(input_buffer, &statement))
         {
@@ -78,19 +92,29 @@ int main(int argc, char* argv[])
                 printf("Syntax error. Could not parse statement.\n");
                 continue;
             }
+            default:
+            {
+                fprintf(stderr, "Error. Prepare statement unrecognized return value.\n");
+                exit(EXIT_FAILURE);
+            }
         }
         
         switch(execute_statement(&statement, table))
         {
             case EXECUTE_SUCCESS:
             {
-                printf("Executed successfully.\n");
+                fprintf(stdout, "Executed successfully.\n");
                 break;
             }
             case EXECUTE_TABLE_FULL:
             {
-                printf("Error: table full.\n");
+                fprintf(stdout, "Error: table full.\n");
                 break;
+            }
+            default:
+            {
+                fprintf(stderr, "Error. Execute statement unrecognized return value.\n");
+                exit(EXIT_FAILURE);
             }
         }
     }

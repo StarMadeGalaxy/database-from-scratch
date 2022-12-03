@@ -63,5 +63,5 @@ internal void guest_text()
 
 internal void print_promt()
 {
-    fputs("\nhandmade_db> ", stdout);
+    fputs("\nilyuk_db> ", stdout);
 }

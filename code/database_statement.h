@@ -1,5 +1,5 @@
-#ifndef _DATABASE_STATEMENT_H
-#define _DATABASE_STATEMENT_H
+#ifndef DATABASE_STATEMENT_H
+#define DATABASE_STATEMENT_H
 
 #include "database_base_types.h"
 #include "database_package_row.h"
@@ -37,9 +37,12 @@ typedef enum ExecuteResult
 
 
 internal PrepareStatementResult prepare_insert(InputBuffer* input_buffer, Statement* statement);
-internal PrepareStatementResult prepare_statement(InputBuffer* input_buffer, Statement* statement);
 internal ExecuteResult execute_insert(Statement* statement, Table* table);
+
+internal PrepareStatementResult prepare_select(InputBuffer* input_buffer, Statement* statement);
 internal ExecuteResult execute_select(Statement* statement, Table* table);
+
+internal PrepareStatementResult prepare_statement(InputBuffer* input_buffer, Statement* statement);
 internal ExecuteResult execute_statement(Statement* statement, Table* table);
 
 

@@ -3,7 +3,6 @@
 #include <stdlib.h>   // for malloc
 
 #include "database_package_row.h"
-#include "database_package_table.h"
 
 
 internal void print_package_row(PackageRow* row)
@@ -15,27 +14,17 @@ internal void print_package_row(PackageRow* row)
 }
 
 
-internal void* row_slot(Table* table, u64 row_num)
-{
-    u64 page_num = row_num / ROWS_PER_PAGE;
-    void* page = get_page(table->pager, page_num);
-    u64 row_offset = row_num % ROWS_PER_PAGE;
-    u64 byte_offset = row_offset * PACKAGE_ROW_SIZE;
-    return (void*)((u8*)page + byte_offset);
-}
-
-
 internal void serialize_package_row(PackageRow* source, void* destination)
 {
-    memcpy((u8*)(destination) + PACKAGE_ID_OFFSET, &(source->id), PACKAGE_ID_SIZE);
-    memcpy((u8*)(destination) + PACKAGE_NAME_OFFSET, &(source->package_name), PACKAGE_NAME_SIZE);
-    memcpy((u8*)(destination) + PACKAGE_STREET_OFFSET, &(source->package_street), PACKAGE_STREET_SIZE);
+    memcpy((void*)((u8*)(destination) + PACKAGE_ID_OFFSET), (void*)(&(source->id)), PACKAGE_ID_SIZE);
+    strncpy((u8*)(destination) + PACKAGE_NAME_OFFSET, source->package_name, PACKAGE_NAME_SIZE);
+    strncpy((u8*)(destination) + PACKAGE_STREET_OFFSET, source->package_street, PACKAGE_STREET_SIZE);
 }
 
 
 internal void deserialize_package_row(void* source, PackageRow* destination)
 {
-    memcpy(&(destination->id), (u8*)source + PACKAGE_ID_OFFSET, PACKAGE_ID_SIZE);
-    memcpy(&(destination->package_name), (u8*)source + PACKAGE_NAME_OFFSET, PACKAGE_NAME_SIZE);
-    memcpy(&(destination->package_street), (u8*)source + PACKAGE_STREET_OFFSET, PACKAGE_STREET_SIZE);
+    memcpy((void*)(&destination->id), (void*)((u8*)source + PACKAGE_ID_OFFSET), PACKAGE_ID_SIZE);
+    strncpy(destination->package_name, (u8*)source + PACKAGE_NAME_OFFSET, PACKAGE_NAME_SIZE);
+    strncpy(destination->package_street, (u8*)source + PACKAGE_STREET_OFFSET, PACKAGE_STREET_SIZE);
 }
