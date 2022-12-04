@@ -9,7 +9,30 @@
 #include "database_package_table.h"
 #include "database_base_types.h"
 #include "database_package_row.h"
+#include "database_cursor.h"
 #endif // defined(DB_DEBUG)
+
+
+internal void debug_cursor_start(DbCursor* cursor)
+{
+#if defined(DB_DEBUG)
+    fprintf(stdout, "\n+Start cursor created\n");
+    fprintf(stdout, "|Cursor row num: %llu\n", cursor->row_num);
+    fprintf(stdout, "|Cursor end of table: %u\n", cursor->end_of_table);      
+    fprintf(stdout, "+--------------------------------------------+\n");  
+#endif // defined(DB_MODE)
+}
+
+
+internal void debug_cursor_end(DbCursor* cursor)
+{
+#if defined(DB_DEBUG)
+    fprintf(stdout, "\n+End cursor created\n");
+    fprintf(stdout, "|Cursor row num: %llu\n", cursor->row_num);
+    fprintf(stdout, "|Cursor end of table: %u\n", cursor->end_of_table);      
+    fprintf(stdout, "+--------------------------------------------+\n");  
+#endif // defined(DB_MODE)
+}
 
 
 internal void debug_open_db(const char* filename, u64 num_rows)

@@ -49,6 +49,7 @@ internal ExecuteResult execute_insert(Statement* statement, Table* table)
     serialize_package_row(row_to_insert, cursor_value(cursor));
     table->num_rows += 1;
 
+    debug_cursor_end(cursor);
     free(cursor);
     return EXECUTE_SUCCESS;
     
@@ -73,6 +74,8 @@ internal ExecuteResult execute_select(Statement* statement, Table* table)
         print_package_row(&row);
         cursor_advance(cursor);
     }
+    
+    debug_cursor_start(cursor);
     free(cursor);
     return EXECUTE_SUCCESS;
 }

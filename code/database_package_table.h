@@ -7,6 +7,7 @@
 #include "database_pager.h"
 
 
+
 typedef struct Table
 {
     u64 num_rows;

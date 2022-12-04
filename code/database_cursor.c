@@ -19,7 +19,7 @@ internal DbCursor* table_end(Table* table)
 {
     DbCursor* cursor = (DbCursor*)malloc(sizeof(DbCursor));
     cursor->table = table;
-    cursor->row_num = 0;
+    cursor->row_num = table->num_rows;
     cursor->end_of_table = True;
 
     return cursor;
