@@ -7,13 +7,13 @@
 # Linker output
 *.ilk
 *.exp
-*.dll
 
 # Executables
 *.exe
 
 # Database files
 *.ilyukdb
+*.idb
 
 # Debug files
 *.pdb
@@ -24,11 +24,5 @@
 # Visual Studio Code
 .vscode/
 
-
 # Build directory
-code/cpp_version
 build/
-
-CommandLineFPS.cpp
-cpp_snake.cpp
-4CODER_HIGHLIGHT_TRASH.cpp
