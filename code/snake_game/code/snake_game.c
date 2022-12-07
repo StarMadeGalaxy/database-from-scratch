@@ -85,6 +85,7 @@ internal void snake_game_start()
     //system("PAUSE");
     
 #if defined(GUI_ENABLED)
+    // Will conflict with windows.h (Rectangle, closewinows, showcursor) error redefinition
     InitWindow(screenWidth, screenHeight, "Snake Game");
     SetTargetFPS(60);               
     while (!WindowShouldClose())    
@@ -92,7 +93,7 @@ internal void snake_game_start()
         BeginDrawing();
         ClearBackground(RAYWHITE);
         EndDrawing();
-        CloseWindow();       
+        CloeWindow();       
     }
 #endif // defined(GUI_ENABLED)
 #if defined(DEBUG_MODE)

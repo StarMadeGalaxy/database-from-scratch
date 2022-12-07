@@ -1,4 +1,5 @@
 #include "post_office.h"
+#include "database_base_types.h"
 
 
 typedef struct PostOffice

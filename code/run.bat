@@ -1,7 +1,15 @@
-@echo off
+@ECHO OFF
 
-pushd ..\build
+CD ..
 
-start database_entry_point.exe
+SET SRC=%cd%
+SET RL_PATH=%SRC%\thirdparty\raylib
+SET RL_BIN_PATH=%RL_PATH%\bin
 
-popd
+XCOPY /S %RL_BIN_PATH% build  
+
+PUSHD build
+
+START database_entry_point.exe 
+
+POPD

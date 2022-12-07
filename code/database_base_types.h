@@ -27,11 +27,13 @@ typedef double f64;
 #define global static
 #define local static
 
+#define UNUSED_PARAMETER(x) ((void)(x))
+
 // database_boolean
 typedef u8 DbBool;
 
-#define DbFalse ((DbBool)0)
-#define DbTrue ((DbBool)1)
+#define DbFalse 0
+#define DbTrue 1
 
 #if defined(False)
 #   undef False

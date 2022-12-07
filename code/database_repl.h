@@ -1,12 +1,6 @@
-#ifndef _DATABASE_REPL_H
-#define _DATABASE_REPL_H
+#ifndef DATABASE_REPL_H
+#define DATABASE_REPL_H
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
-
-#include "getline.h"
 #include "database_base_types.h"
 
 

@@ -10,6 +10,21 @@
 #include "database_debug.c"
 
 
+#if defined(_WIN32)
+internal LARGE_INTEGER large_integer_cast(u64 value)
+{
+    LARGE_INTEGER li_value;
+#if defined(INT64_MAX)   // Check compiler support
+    li_value.QuadPart = (LONGLONG)value;
+#else
+    li_value.high_part = value & 0xFFFFFFFF00000000;
+    li_value.low_part  = value & 0xFFFFFFFF
+#endif // defined(INT64_MAX)
+    return li_value;
+}
+#endif // defined(_WIN32)
+
+
 internal Pager* pager_open(const char* filename)
 {
 #if defined(_WIN32)
@@ -135,19 +150,4 @@ internal void pager_flush(Pager* pager, u64 page_num, u64 size_to_flush)
     debug_pager_flush(pager, page_num, bytes_written, size_to_flush);
 #endif // defined(_WIN32)
 }
-
-
-#if defined(_WIN32)
-internal LARGE_INTEGER large_integer_cast(u64 value)
-{
-    LARGE_INTEGER li_value;
-#if defined(INT64_MAX)   // Check compiler support
-    li_value.QuadPart = (LONGLONG)value;
-#else
-    li_value.high_part = value & 0xFFFFFFFF00000000;
-    li_value.low_part  = value & 0xFFFFFFFF
-#endif // defined(INT64_MAX)
-    return li_value;
-}
-#endif // defined(_WIN32)
 

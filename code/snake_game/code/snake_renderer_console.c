@@ -1,5 +1,31 @@
 #include "snake_renderer_console.h"
 
+#ifdef _WIN32
+#include <Windows.h>
+#include <conio.h>
+#endif /*_WIN32*/
+
+
+#if defined(_WIN32)
+#   define FILE_DESCRIPTOR HANDLE
+#else 
+#   define FILE_DESCRIPTOR int
+#endif // defined(_WIN32)
+
+
+typedef struct ConsoleRenderer
+{
+    ConsoleRendererCommand commands;
+    ConsoleSize size; 
+    void* frame_data;
+    FILE_DESCRIPTOR console_handler;
+#if defined(_WIN32)
+    CONSOLE_SCREEN_BUFFER_INFO renderer_cbsi;
+#elif defined(__linux__)
+    int console_handler;
+#endif // defined(_WIN32)    
+} ConsoleRenderer;
+
 
 SRC_API u16 console_is_key_pressed(u32 virtual_key_code)
 {

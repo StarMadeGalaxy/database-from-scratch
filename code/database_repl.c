@@ -1,4 +1,11 @@
+#include <stdlib.h>
+#include <stdint.h>
+#include <stddef.h>
+#include <stdio.h>
+
 #include "database_repl.h"
+#include "getline.h"
+#include "database_debug.c"
 
 
 internal InputBuffer* new_input_buffer()
@@ -29,6 +36,8 @@ internal void read_input(InputBuffer* input_buffer)
     /* ignore newline character by from getline function */
     input_buffer->input_size = bytes_read - 1;
     input_buffer->buffer[input_buffer->input_size] = '\0';
+
+    debug_input_buffer(input_buffer);
 }
 
 
@@ -36,18 +45,6 @@ internal void close_input_buffer(InputBuffer* input_buffer)
 {
     free(input_buffer->buffer);
     free(input_buffer);
-}
-
-
-internal void input_buffer_debug_print(InputBuffer* input_buffer)
-{
-#if defined(DB_DEBUG)
-    puts("\n----INPUT BUFFER DEBUG INFO----");
-    printf("\nBuffer: %p", input_buffer->buffer);
-    printf("\nBuffer size: %zu", input_buffer->buffer_size);
-    printf("\nInput size: %zu", input_buffer->input_size);
-    puts("\n-------------------------------\n");
-#endif // defined(DB_DEBUG)
 }
 
 

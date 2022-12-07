@@ -8,15 +8,15 @@
 #include <string.h>
 
 // Unity build?
-#include "database_package_table.c"
-#include "laboratory_work\post_office.c"
 #include "laboratory_work\post_package.c"
-#include "database_package_row.c"
+#include "laboratory_work\post_office.c"
+#include "database_package_table.c"
 #include "database_meta_commands.c"
+#include "database_package_row.c"
 #include "database_statement.c"
-#include "database_repl.c"
-#include "database_pager.c"
 #include "database_cursor.c"
+#include "database_pager.c"
+#include "database_repl.c"
 
 #include "database_debug.c"
 
@@ -28,9 +28,11 @@ int main(int argc, char* argv[])
 #endif //!defined(_WIN32) && !defined(__linux__)
     if (argc < 2)
     {
-        fprintf(stderr, "Please specify the database file with .ilyukdb extension!\n");
+        fprintf(stderr, "Please specify the database file with .idb extension!\n");
         exit(EXIT_FAILURE);
     }
+
+  //  raylib_start();
 
     guest_text();
     InputBuffer* input_buffer = new_input_buffer();

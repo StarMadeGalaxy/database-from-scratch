@@ -1,16 +1,31 @@
 #if !defined(DATABASE_DEBUGGING)
 #define DATABASE_DEBUGGING
 
-
 #if defined(DB_DEBUG)
+// headers should be here, but then 
+// functions definitions not visible
+#endif // defined(DB_DEBUG)
+
+
 #include <stdio.h>
-#include <Windows.h>
 #include "database_pager.h"
 #include "database_package_table.h"
 #include "database_base_types.h"
 #include "database_package_row.h"
 #include "database_cursor.h"
+#include "database_repl.h"
+
+
+internal void debug_input_buffer(InputBuffer* input_buffer)
+{
+#if defined(DB_DEBUG)
+    fprintf(stdout, "\n+INPUT BUFFER DEBUG INFO");
+    fprintf(stdout, "|Buffer: %p\n", input_buffer->buffer);
+    fprintf(stdout, "|Buffer size: %zu\n", input_buffer->buffer_size);
+    fprintf(stdout, "|Input size: %zu\n", input_buffer->input_size);
+    fprintf(stdout, "+-------------------------------\n");
 #endif // defined(DB_DEBUG)
+}
 
 
 internal void debug_cursor_start(DbCursor* cursor)

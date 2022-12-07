@@ -3,12 +3,7 @@
 #ifndef SNAKE_RENDERER_CONSOLE
 #define SNAKE_RENDERER_CONSOLE
 
-#ifdef _WIN32
-#include <Windows.h>
-#endif /*_WIN32*/
-
 #include <stdlib.h>
-#include <conio.h>
 
 #include "snake_map.c"
 #include "snake_game_platform.h"
@@ -64,18 +59,7 @@ typedef struct ConsoleSize
 } ConsoleSize;
 
 
-typedef struct ConsoleRenderer
-{
-    ConsoleRendererCommand commands;
-    ConsoleSize size; 
-    void* frame_data;
-#if defined(_WIN32)
-    HANDLE console_handler;
-    CONSOLE_SCREEN_BUFFER_INFO renderer_cbsi;
-#elif defined(__linux__)
-#endif // defined(_WIN32)
-    
-} ConsoleRenderer;
+typedef struct ConsoleRenderer ConsoleRenderer;
 
 
 SRC_API u16 console_is_key_pressed(u32 virtual_key_code);

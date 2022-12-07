@@ -4,15 +4,9 @@
 #define DATABASE_PACKAGE_TABLE_H
 
 #include "database_base_types.h"
-#include "database_pager.h"
 
 
-
-typedef struct Table
-{
-    u64 num_rows;
-    Pager* pager;
-} Table;
+typedef struct Table Table;
 
 
 internal Table* new_table();

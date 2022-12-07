@@ -1,5 +1,5 @@
 #include "post_package.h"
-
+#include "database_base_types.h"
 
 typedef enum PackageType
 {
