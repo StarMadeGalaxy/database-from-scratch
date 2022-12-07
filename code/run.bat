@@ -1,4 +1,4 @@
-@ECHO OFF
+d@ECHO OFF
 
 CD ..
 
@@ -10,6 +10,8 @@ XCOPY /S %RL_BIN_PATH% build
 
 PUSHD build
 
-START database_entry_point.exe 
+START database_entry_point.exe test_db.idb
 
 POPD
+
+CD code
