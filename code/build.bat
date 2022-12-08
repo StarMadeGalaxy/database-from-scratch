@@ -21,7 +21,9 @@ SET RL_DB_GUI=%SRC%\code\database_raylib_gui.c
 SET CL_OPTS=/Zi /W3 /nologo /Od /wd5105 /std:c11
 SET COMMON_LINK_FLAGS=/opt:ref user32.lib snake_renderer_console.lib %RL_LIB_PATH%\raylib.lib database_raylib_gui.obj
 :: For snake game
-SET CL_OPTS=/DRELEASE_MODE /DGUI_DISABLED /DSNAKE_DOUBLY_LINKED_LIST /D_CRT_SECURE_NO_WARNINGS %CL_OPTS%
+SET CL_OPTS=/DNO_DEBUG_MODE /DGUI_DISABLED /DSNAKE_DOUBLY_LINKED_LIST /D_CRT_SECURE_NO_WARNINGS %CL_OPTS%
+:: Database debug
+SET CL_OPTS=/DNO_DB_DEBUG %CL_OPTS%
 
 IF NOT EXIST bulid MKDIR build
 PUSHD build

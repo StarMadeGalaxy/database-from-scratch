@@ -10,6 +10,19 @@
 #include "database_debug.c"
 
 
+// DATABASE DEBUG
+internal void debug_close_pager(Pager* pager, u64 num_full_pages, u64 num_additional_row);
+// DATABASE DEBUG
+
+
+typedef struct Pager 
+{
+    FILE_DESCRIPTOR file_handler;
+    u64 file_size;
+    void* pages[TABLE_MAX_PAGES];
+} Pager;
+
+
 #if defined(_WIN32)
 internal LARGE_INTEGER large_integer_cast(u64 value)
 {
@@ -25,7 +38,7 @@ internal LARGE_INTEGER large_integer_cast(u64 value)
 #endif // defined(_WIN32)
 
 
-internal Pager* pager_open(const char* filename)
+internal Pager* pager_open(const char* filename, u64* out_file_size)
 {
 #if defined(_WIN32)
     FILE_DESCRIPTOR file_handler = CreateFileA((LPCSTR)filename, 
@@ -55,6 +68,7 @@ internal Pager* pager_open(const char* filename)
     Pager* pager = (Pager*)malloc(sizeof(Pager));
     pager->file_handler = file_handler;
     pager->file_size = file_size;
+    *out_file_size = pager->file_size;
     
     for (u32 i = 0; i < TABLE_MAX_PAGES; i++)
     {
@@ -63,6 +77,39 @@ internal Pager* pager_open(const char* filename)
 
     debug_open_pager(pager);
     return pager;
+}
+internal void pager_flush(Pager* pager, u64 page_num, u64 size_to_flush)
+{
+    if (pager->pages[page_num] == NULL)
+    {
+        fprintf(stderr, "Error while flushing page. Page is NULL.\n");
+        exit(EXIT_FAILURE);
+    }
+
+#if defined(_WIN32)
+    LARGE_INTEGER page_offset = large_integer_cast(page_num * PAGE_SIZE);
+    
+    if (!SetFilePointerEx(pager->file_handler, page_offset, NULL, FILE_BEGIN))
+    {
+        fprintf(stderr, "Error while fetching database page. Error: %d\n", GetLastError());
+        exit(EXIT_FAILURE);
+    }
+    DWORD bytes_written;
+    
+    if (!WriteFile(pager->file_handler, (LPVOID)(pager->pages[page_num]), (DWORD)size_to_flush, &bytes_written, NULL))
+    {
+        fprintf(stderr, "Error while writing database page. Error: %d\n", GetLastError());
+        exit(EXIT_FAILURE);
+    }
+    
+    if (bytes_written != size_to_flush)
+    {
+        fprintf(stderr, "Error. Page is written partially. (bytes written != size_to_flush).\n");
+        exit(EXIT_FAILURE);
+    }
+
+    debug_pager_flush(pager, page_num, bytes_written, size_to_flush);
+#endif // defined(_WIN32)
 }
 
 
@@ -117,37 +164,73 @@ internal void* get_page(Pager* pager, u64 page_num)
 }
 
 
-internal void pager_flush(Pager* pager, u64 page_num, u64 size_to_flush)
+internal void pager_close(Pager* pager, u64 table_num_rows)
 {
-    if (pager->pages[page_num] == NULL)
+    u64 num_full_pages = table_num_rows / ROWS_PER_PAGE;
+     
+    for (u64 i = 0; i < num_full_pages; i++)
     {
-        fprintf(stderr, "Error while flushing page. Page is NULL.\n");
-        exit(EXIT_FAILURE);
+        if (pager->pages[i] == NULL)
+        {
+            continue;
+        }
+        pager_flush(pager, i, PAGE_SIZE);
+        free(pager->pages[i]);
+        pager->pages[i] = NULL;
     }
-
+    
+    u64 num_additional_rows = table_num_rows % ROWS_PER_PAGE;
+    if (num_additional_rows > 0)
+    {
+        u64 last_page = num_full_pages;
+        if (pager->pages[last_page] != NULL)
+        {
+            pager_flush(pager, last_page, num_additional_rows * PACKAGE_ROW_SIZE);
+            free(pager->pages[last_page]);
+            pager->pages[last_page] = NULL;
+        }
+    }
+    for (u64 i = 0; i < TABLE_MAX_PAGES; i++)
+    {
+        void* page = pager->pages[i];
+        if (page != NULL)
+        {
+            free(pager->pages[i]);
+        }
+    }
 #if defined(_WIN32)
-    LARGE_INTEGER page_offset = large_integer_cast(page_num * PAGE_SIZE);
-    
-    if (!SetFilePointerEx(pager->file_handler, page_offset, NULL, FILE_BEGIN))
+    if (!CloseHandle(pager->file_handler))
     {
-        fprintf(stderr, "Error while fetching database page. Error: %d\n", GetLastError());
+        fprintf(stderr, "Error while closing the table. Error: %d", GetLastError());
         exit(EXIT_FAILURE);
     }
-    DWORD bytes_written;
-    
-    if (!WriteFile(pager->file_handler, (LPVOID)(pager->pages[page_num]), (DWORD)size_to_flush, &bytes_written, NULL))
-    {
-        fprintf(stderr, "Error while writing database page. Error: %d\n", GetLastError());
-        exit(EXIT_FAILURE);
-    }
-    
-    if (bytes_written != size_to_flush)
-    {
-        fprintf(stderr, "Error. Page is written partially. (bytes written != size_to_flush).\n");
-        exit(EXIT_FAILURE);
-    }
-
-    debug_pager_flush(pager, page_num, bytes_written, size_to_flush);
 #endif // defined(_WIN32)
+
+    debug_close_pager(pager, num_full_pages, num_additional_rows);
+    free(pager);
 }
 
+
+// DATABASE DEBUG
+internal void debug_close_pager(Pager* pager, u64 num_full_pages, u64 num_additional_rows)
+{
+#if defined(DB_DEBUG)
+    fprintf(stdout, "\n+Closing database-\n");
+    fprintf(stdout, "|Number of additional rows: %llu\n", num_additional_rows);
+    fprintf(stdout, "|     Number of full pages: %llu\n", num_full_pages);
+    fprintf(stdout, "|          Pager file size: %llu\n", pager->file_size);
+    fprintf(stdout, "+--------------------------------------------+\n");
+    system("PAUSE");
+#endif // defined(DB_MODE)
+}
+
+
+internal void debug_open_pager(Pager* pager)
+{
+#if defined(DB_DEBUG)
+    fprintf(stdout, "\n+Opening pager\n");
+    fprintf(stdout, "|File size opened by the pager: %llu\n", pager->file_size);
+    fprintf(stdout, "+--------------------------------------------+\n");
+#endif // defined(DB_MODE)
+}
+// DATABASE DEBUG

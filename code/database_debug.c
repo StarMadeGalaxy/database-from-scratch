@@ -61,28 +61,6 @@ internal void debug_open_db(const char* filename, u64 num_rows)
 }
 
 
-internal void debug_open_pager(Pager* pager)
-{
-#if defined(DB_DEBUG)
-    fprintf(stdout, "\n+Opening pager\n");
-    fprintf(stdout, "|File size opened by the pager: %llu\n", pager->file_size);
-    fprintf(stdout, "+--------------------------------------------+\n");
-#endif`// defined(DB_MODE)
-}
-
-
-internal void debug_close_db(Table* table, u64 num_full_pages, u64 num_add_row)
-{
-#if defined(DB_DEBUG)
-    fprintf(stdout, "\n+Closing database-\n");
-    fprintf(stdout, "|Number of additional rows: %llu\n", num_add_row);
-    fprintf(stdout, "|     Number of full pages: %llu\n", num_full_pages);
-    fprintf(stdout, "+--------------------------------------------+\n");
-    system("PAUSE");
-#endif // defined(DB_MODE)
-}
-
-
 internal void debug_print_package_row(void)
 {
 #if defined(DB_DEBUG)

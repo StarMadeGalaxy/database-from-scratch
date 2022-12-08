@@ -73,9 +73,9 @@ internal ExecuteResult execute_select(Statement* statement, Table* table)
         deserialize_package_row(cursor_value(cursor), &row);
         print_package_row(&row);
         cursor_advance(cursor);
+        debug_cursor_start(cursor);
     }
     
-    debug_cursor_start(cursor);
     free(cursor);
     return EXECUTE_SUCCESS;
 }
