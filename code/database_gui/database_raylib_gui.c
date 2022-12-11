@@ -19,46 +19,60 @@
 #include "database_raygui_style.h"
 #include "database_raylib_gui.h"
 
-#include "..\database_base_types.h"
-#include "..\database_package_row.h"
-#include "..\database_repl.h"
+// #include "..\database_base_types.h"
+// #include "..\database_package_row.h"
+//#include "..\database_statement.h"
+//#include "..\database_repl.h"
 
 
-internal void database_gui_send_query(PackageRow row_to_send, InputBuffer* out_input_buffer);
-
+//internal void database_gui_send_query(Statement* statement, InputBuffer* out_input_buffer);
 
 //----------------------------------------------------------------------------------
 // Controls Functions Declaration
 //----------------------------------------------------------------------------------
-static void AddStreet();
-static void AddPostOffice();
-static void OfficeState();
+static void RegisterPackageButton();                // Button: register_package_button logic
 
-//------------------------------------------------------------------------------------
-// Program main entry point
-//------------------------------------------------------------------------------------
 
 int raylib_start()
 {
     // Initialization
     //---------------------------------------------------------------------------------------
-    int screenWidth = 800;
-    int screenHeight = 600;
+    int screenWidth = 936;
+    int screenHeight = 504;
 
     InitWindow(screenWidth, screenHeight, "Database from scratch");
-
-    // database_from_scratch: controls initialization
+    GuiLoadStyleDatabaseRayguiStyle();  
+    // Database from scratch: controls initialization
     //----------------------------------------------------------------------------------
-    const char *main_windowText = "I dont undertstand why do i need it";
-    const char *buttons_group_boxText = "Database controls";
-    const char *add_streetText = "Add street";
-    const char *add_post_officeText = "Add post office";
-    const char *office_stateText = "Office state";
+    // Const text
+    const char *package_size_boxText = "Package size";    // GROUPBOX: package_size_box
+    const char *package_size_toggleText = "S;M;L";    // TOGGLEGROUP: package_size_toggle
+    const char *register_package_buttonText = "Register package";    // BUTTON: register_package_button
+    const char *office_status_window_boxText = "Office status";    // WINDOWBOX: office_status_window_box
+    const char *street_name_group_boxText = "Street name";    // GROUPBOX: street_name_group_box
+    const char *package_name_group_boxText = "Package name";    // GROUPBOX: package_name_group_box
+    const char *add_office_toggleText = "Add office";    // TOGGLE: add_office_toggle
+    const char *add_street_toggleText = "Add street";    // TOGGLE: add_street_toggle
+    const char *office_status_toggleText = "Office status";    // TOGGLE: office_status_toggle
+    const char *add_street_window_boxText = "Add street";    // WINDOWBOX: add_street_window_box
+    const char *add_office_window_boxText = "Add office";    // WINDOWBOX: add_office_window_box
     
-    Vector2 anchor01 = { 0, 0 };
-    Vector2 anchor03 = { 8, 24 };
+    // Define controls variables
+    int package_size_toggleActive = 0;            // ToggleGroup: package_size_toggle
+
+    bool street_name_text_boxEditMode = false;
+    bool package_name_text_boxEditMode = false;
+
+    char street_name_text_boxText[128] = "";            // TextBox: street_name_text_box
+    char package_name_text_boxText[128] = "";
     
-    bool main_windowActive = true;
+    bool add_office_toggleActive = false;            // Toggle: add_office_toggle
+    bool add_street_toggleActive = false;            // Toggle: add_street_toggle
+    bool office_status_toggleActive = false;            // Toggle: office_status_toggle
+
+    bool add_office_window_boxActive = false;            // WindowBox: add_office_window_box
+    bool add_street_window_boxActive = false;            // WindowBox: add_street_window_box
+    bool office_status_window_boxActive = true;            // WindowBox: office_status_window_box
     //----------------------------------------------------------------------------------
 
     SetTargetFPS(60);
@@ -67,28 +81,37 @@ int raylib_start()
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
-        // Update
-        //----------------------------------------------------------------------------------
-        // TODO: Implement required update logic
-        //----------------------------------------------------------------------------------
-
-        // Draw
-        //----------------------------------------------------------------------------------
         BeginDrawing();
 
             ClearBackground(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR))); 
 
-            // raygui: controls drawing
-            //----------------------------------------------------------------------------------
-            if (main_windowActive)
+            GuiGroupBox((Rectangle){ 264, 216, 192, 72 }, package_size_boxText);
+            GuiGroupBox((Rectangle){ 264, 24, 192, 72 }, street_name_group_boxText);
+            GuiGroupBox((Rectangle){ 264, 120, 192, 72 }, package_name_group_boxText);
+
+            if (GuiButton((Rectangle){ 24, 312, 432, 168 }, register_package_buttonText)) 
             {
-                main_windowActive = !GuiWindowBox((Rectangle){ anchor01.x + 0, anchor01.y + 0, 800, 600 }, main_windowText);
+                RegisterPackageButton(street_name_text_boxText, package_name_text_boxText); 
             }
-            GuiGroupBox((Rectangle){ anchor03.x + 0, anchor03.y + 10, 208, 204 }, buttons_group_boxText);
-            if (GuiButton((Rectangle){ anchor03.x + 10, anchor03.y + 20, 188, 56 }, add_streetText)) AddStreet(); 
-            if (GuiButton((Rectangle){ anchor03.x + 10, anchor03.y + 84, 188, 56 }, add_post_officeText)) AddPostOffice(); 
-            if (GuiButton((Rectangle){ anchor03.x + 10, anchor03.y + 148, 188, 56 }, office_stateText)) OfficeState(); 
-            //----------------------------------------------------------------------------------
+            if (GuiTextBox((Rectangle){ 288, 48, 144, 24 }, street_name_text_boxText, 128, street_name_text_boxEditMode)) 
+            {
+                street_name_text_boxEditMode = !street_name_text_boxEditMode;
+            }
+            if (GuiTextBox((Rectangle){ 288, 144, 144, 24 }, package_name_text_boxText, 128, package_name_text_boxEditMode)) 
+            {
+                package_name_text_boxEditMode = !package_name_text_boxEditMode;
+            }
+            
+            add_office_toggleActive = GuiToggle((Rectangle){ 24, 24, 192, 72 }, add_office_toggleText, add_office_toggleActive);
+            add_street_toggleActive = GuiToggle((Rectangle){ 24, 120, 192, 72 }, add_street_toggleText, add_street_toggleActive);
+            office_status_toggleActive = GuiToggle((Rectangle){ 24, 216, 192, 72 }, office_status_toggleText, office_status_toggleActive);
+            
+            package_size_toggleActive = GuiToggleGroup((Rectangle){ 296, 240, 40, 24 }, package_size_toggleText, package_size_toggleActive);
+
+            // Toggle windows
+            if (add_office_toggleActive) { add_office_window_boxActive = GuiWindowBox((Rectangle){ 480, 24, 432, 456 }, add_office_window_boxText); }
+            if (add_street_toggleActive) { add_street_window_boxActive = GuiWindowBox((Rectangle){ 480, 24, 432, 456 }, add_street_window_boxText); }
+            if (office_status_toggleActive) { office_status_window_boxActive = GuiWindowBox((Rectangle){ 480, 24, 432, 456 }, office_status_window_boxText); }
 
         EndDrawing();
         //----------------------------------------------------------------------------------
@@ -105,14 +128,10 @@ int raylib_start()
 //------------------------------------------------------------------------------------
 // Controls Functions Definitions (local)
 //------------------------------------------------------------------------------------
-static void AddStreet()
+// Button: register_package_button logic
+static void RegisterPackageButton(const char* street_name, const char* package_name)
+
 {
-}
-static void AddPostOffice()
-{
-    // TODO: Implement control logic
-}
-static void OfficeState()
-{
-    // TODO: Implement control logic
+    fprintf(stdout, "Street name: %s\n", street_name);
+    fprintf(stdout, "Package name: %s\n", package_name);
 }
