@@ -36,14 +36,30 @@ internal PrepareStatementResult prepare_read(InputBuffer* input_buffer, Statemen
     {
         return PREPARE_UNRECOGNIZED_DATABASE_FILE;
     }
-
     statement->type = STATEMENT_READ;
+
+    // TEMPORARY SOLUTION MUST BE REWORKED
+    statement->filename = (char*)malloc(strlen(filename_string));
+    if (statement->filename == NULL)
+    {
+        fprintf(stderr, "Error. Malloc failed while allocating filename from READ statement.\n");
+        exit(EXIT_FAILURE);
+    }
+    strcpy(statement->filename, filename_string);
+    // TEMPORARY SOLUTION MUST BE REWORKED
+
     return PREPARE_STATEMENT_SUCCESS;
 }
 
 
-internal ExecuteResult execute_read(Statement* statement, Table* table)
+internal ExecuteResult execute_read(Statement* statement, Table** table)
 {
+    if (*table != NULL)
+    {
+        db_close(*table);
+    }
+    *table = db_open(statement->filename);
+    free(statement->filename);
     return EXECUTE_SUCCESS;
 }
 
@@ -90,6 +106,11 @@ internal PrepareStatementResult prepare_insert(InputBuffer* input_buffer, Statem
 
 internal ExecuteResult execute_insert(Statement* statement, Table* table)
 {
+    if (table == NULL)
+    {
+        return EXECUTE_DATABASE_FILE_NOT_LOADED;
+    }
+
     DbCursor* cursor = table_end(table);
 
     PackageRow* row_to_insert = &(statement->row_to_insert);
@@ -114,6 +135,11 @@ internal PrepareStatementResult prepare_select(InputBuffer* input_buffer, Statem
 
 internal ExecuteResult execute_select(Statement* statement, Table* table)
 {
+    if (table == NULL)
+    {
+        return EXECUTE_DATABASE_FILE_NOT_LOADED;
+    }
+
     DbCursor* cursor = table_start(table);
 
     PackageRow row;
@@ -150,17 +176,17 @@ internal PrepareStatementResult prepare_statement(InputBuffer* input_buffer, Sta
 }
 
 
-internal ExecuteResult execute_statement(Statement* statement, Table* table)
+internal ExecuteResult execute_statement(Statement* statement, Table** table)
 {
     switch (statement->type)
     {
         case STATEMENT_SELECT:
         {
-            return execute_select(statement, table);
+            return execute_select(statement, *table);
         }
         case STATEMENT_INSERT:
         {
-            return execute_insert(statement, table);
+            return execute_insert(statement, *table);
         }
         case STATEMENT_READ:
         {

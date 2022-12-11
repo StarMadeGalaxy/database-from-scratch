@@ -21,13 +21,8 @@ header to the corresponding source file. So I'm about to
   accomplish the same in this project, but here I'm going to
 include all of the source files */
 
-#if defined(GUI_ENABLED)
-# include "snake_renderer_raylib.h"
-# define CURRENT_RENDERER RaylibRenderer
-#elif !defined(GUI_ENABLED)
-# include "snake_renderer_console.h"
-# define CURRENT_RENDERER ConsoleRenderer
-#endif /*define(GUI_ENABLED)*/
+#include "snake_renderer_console.h"
+#define CURRENT_RENDERER ConsoleRenderer
 
 #include "snake_game_update.c"
 #include "snake_logic.c"

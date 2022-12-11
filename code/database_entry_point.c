@@ -26,17 +26,18 @@ int main(int argc, char* argv[])
     fprintf(stderr, "Platform is not supported!\n");
     exit(EXIT_FAILURE);
 #endif //!defined(_WIN32) && !defined(__linux__)
-    if (argc < 2)
-    {
-        fprintf(stderr, "Please specify the database file with .idb extension!\n");
-        exit(EXIT_FAILURE);
-    }
 
-  //  raylib_start();
+    // if (argc < 2)
+    // {
+    //     fprintf(stderr, "Please specify the database file with .idb extension!\n");
+    //     exit(EXIT_FAILURE);
+    // }
+
 
     guest_text();
     InputBuffer* input_buffer = new_input_buffer();
-    Table* table = db_open(argv[1]);
+    //Table* table = db_open(argv[1]);
+    Table* table = NULL;
 
     debug_print_package_row();
     
@@ -111,7 +112,7 @@ int main(int argc, char* argv[])
             }
         }
         
-        switch(execute_statement(&statement, table))
+        switch(execute_statement(&statement, &table))
         {
             case EXECUTE_SUCCESS:
             {
@@ -122,6 +123,11 @@ int main(int argc, char* argv[])
             {
                 fprintf(stdout, "Error: table full.\n");
                 break;
+            }
+            case EXECUTE_DATABASE_FILE_NOT_LOADED:
+            {
+                fprintf(stderr, "Error. Database file is not loaded. Please run READ [<filename>.idb].\n");
+                continue;
             }
             default:
             {
