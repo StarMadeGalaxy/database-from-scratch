@@ -2,7 +2,7 @@
 #define DATABASE_RAYLIB_GUI_H
 
 
-void raylib_start();
+int raylib_start();
 
 
 #endif // !defined(DATABASE_RAYLIB_GUI_H)

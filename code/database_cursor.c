@@ -1,6 +1,6 @@
-#include "database_pager.h"
-#include "database_cursor.h"
 #include "database_package_table.h"
+#include "database_cursor.h"
+#include "database_pager.h"
 
 
 internal DbCursor* table_start(Table* table)

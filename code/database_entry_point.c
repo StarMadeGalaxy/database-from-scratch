@@ -76,22 +76,32 @@ int main(int argc, char* argv[])
             }
             case PREPARE_NEGATIVE_ID:
             {
-                printf("Id couldn't be a negative number.\n");
+                fprintf(stderr, "Error. Id couldn't be a negative number.\n");
                 continue;
             }
             case PREPARE_STRING_TOO_LONG:
             {
-                printf("At least one of the arguments is too long as my pp.\n");
+                fprintf(stderr, "Error. At least one of the arguments is too long.\n");
+                continue;
+            }
+            case PREPARE_STRING_TOO_SHORT:
+            {
+                fprintf(stderr, "Error. At least one of the arguments is too short.\n");
+                continue;
+            }
+            case PREPARE_UNRECOGNIZED_DATABASE_FILE:
+            {
+                fprintf(stderr, "Error. Invalid database file.\n");
                 continue;
             }
             case PREPARE_UNRECOGNIZED_STATEMENT:
             {
-                printf("Unrecognized statement at start of '%s'\n", input_buffer->buffer);
+                fprintf(stderr, "Error. Unrecognized statement at start of '%s'\n", input_buffer->buffer);
                 continue;
             }
             case PREPARE_SYNTAX_ERROR:
             {
-                printf("Syntax error. Could not parse statement.\n");
+                fprintf(stderr, "Syntax error. Could not parse statement.\n");
                 continue;
             }
             default:

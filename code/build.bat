@@ -16,7 +16,7 @@ SET DB_ENTRY=%SRC%\code\database_entry_point.c
 SET SNAKE_BUILD_OPTIONS=/DRELEASE_MODE /DGUI_DISABLED /DSNAKE_DOUBLY_LINKED_LIST
 SET SNAKE_RENDERER=%SRC%\code\snake_game\code\snake_renderer_console.c
 
-SET RL_DB_GUI=%SRC%\code\database_raylib_gui.c
+SET RL_DB_GUI=%SRC%\code\database_gui\database_raylib_gui.c
 
 SET CL_OPTS=/Zi /W3 /nologo /Od /wd5105 /std:c11
 SET COMMON_LINK_FLAGS=/opt:ref user32.lib snake_renderer_console.lib %RL_LIB_PATH%\raylib.lib database_raylib_gui.obj

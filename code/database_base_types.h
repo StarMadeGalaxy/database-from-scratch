@@ -28,6 +28,11 @@ typedef double f64;
 #define local static
 
 #define UNUSED_PARAMETER(x) ((void)(x))
+#define BYTE_PTR(x) ((u8*)(x))
+
+#if defined(_WIN32)
+#define MAX_DATABASE_FILENAME_LENGTH 128
+#endif // defined(_WIN32)
 
 // database_boolean
 typedef u8 DbBool;

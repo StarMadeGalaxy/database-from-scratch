@@ -1,8 +1,55 @@
 #include "database_statement.h"
 #include "database_repl.h"
 #include "database_cursor.h"
+#include "database_base_types.h"
 
 
+//------------------------------------------------------------------------------------
+// READ STATEMENT
+//------------------------------------------------------------------------------------
+internal PrepareStatementResult prepare_read(InputBuffer* input_buffer, Statement* statement)
+{
+    char* statement_token = strtok(input_buffer->buffer, " ");
+    char* filename_string = strtok(NULL, " ");
+    u8 file_extension_length = 4;
+    
+    if (statement_token == NULL || filename_string == NULL)
+    {
+        return PREPARE_SYNTAX_ERROR;
+    }
+    if (strlen(filename_string) > MAX_DATABASE_FILENAME_LENGTH)
+    {
+        return PREPARE_STRING_TOO_LONG;
+    }
+    if (strlen(filename_string) <= file_extension_length)
+    {
+        return PREPARE_STRING_TOO_SHORT;
+    }
+
+    // check for file extension
+    char* file_extension_dot = strrchr(filename_string, '\0') - file_extension_length;
+    if (file_extension_dot == NULL) 
+    {
+        return PREPARE_UNRECOGNIZED_DATABASE_FILE;
+    }
+    if (strncmp(file_extension_dot, ".idb", (size_t)file_extension_length))
+    {
+        return PREPARE_UNRECOGNIZED_DATABASE_FILE;
+    }
+
+    statement->type = STATEMENT_READ;
+    return PREPARE_STATEMENT_SUCCESS;
+}
+
+
+internal ExecuteResult execute_read(Statement* statement, Table* table)
+{
+    return EXECUTE_SUCCESS;
+}
+
+//------------------------------------------------------------------------------------
+// INSERT STATEMENT
+//------------------------------------------------------------------------------------
 internal PrepareStatementResult prepare_insert(InputBuffer* input_buffer, Statement* statement)
 {
     char* statement_token = strtok(input_buffer->buffer, " ");
@@ -55,7 +102,9 @@ internal ExecuteResult execute_insert(Statement* statement, Table* table)
     
 }
 
-
+//------------------------------------------------------------------------------------
+// SELECT STATEMENT
+//------------------------------------------------------------------------------------
 internal PrepareStatementResult prepare_select(InputBuffer* input_buffer, Statement* statement)
 {
     statement->type = STATEMENT_SELECT;
@@ -80,7 +129,9 @@ internal ExecuteResult execute_select(Statement* statement, Table* table)
     return EXECUTE_SUCCESS;
 }
 
-/* kind of compiler for SQL */
+//------------------------------------------------------------------------------------
+// KIND OF STATEMENT'S "SQL COMPILER"
+//------------------------------------------------------------------------------------
 internal PrepareStatementResult prepare_statement(InputBuffer* input_buffer, Statement* statement)
 {
     if (strncmp(input_buffer->buffer, "INSERT", 6) == 0)
@@ -90,6 +141,10 @@ internal PrepareStatementResult prepare_statement(InputBuffer* input_buffer, Sta
     if (strncmp(input_buffer->buffer, "SELECT", 6) == 0)
     {
         return prepare_select(input_buffer, statement);
+    }
+    if (strncmp(input_buffer->buffer, "READ", 4) == 0)
+    {
+        return prepare_read(input_buffer, statement);
     }
     return PREPARE_UNRECOGNIZED_STATEMENT;
 }
@@ -106,6 +161,10 @@ internal ExecuteResult execute_statement(Statement* statement, Table* table)
         case STATEMENT_INSERT:
         {
             return execute_insert(statement, table);
+        }
+        case STATEMENT_READ:
+        {
+            return execute_read(statement, table);
         }
     }
     return STATEMENT_UNRECOGNIZED; 

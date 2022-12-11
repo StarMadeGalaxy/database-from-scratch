@@ -15,14 +15,6 @@ internal void debug_close_pager(Pager* pager, u64 num_full_pages, u64 num_additi
 // DATABASE DEBUG
 
 
-typedef struct Pager 
-{
-    FILE_DESCRIPTOR file_handler;
-    u64 file_size;
-    void* pages[TABLE_MAX_PAGES];
-} Pager;
-
-
 #if defined(_WIN32)
 internal LARGE_INTEGER large_integer_cast(u64 value)
 {

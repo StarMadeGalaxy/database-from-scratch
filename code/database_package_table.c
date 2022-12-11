@@ -17,13 +17,6 @@ internal void debug_close_table(Table* table);
 // DATABASE DEBUG
 
 
-typedef struct Table
-{
-    u64 num_rows;
-    Pager* pager;
-} Table;
-
-
 internal Table* db_open(const char* filename)
 {
     Table* table = (Table*)malloc(sizeof(Table));

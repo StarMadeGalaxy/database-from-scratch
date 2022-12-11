@@ -11,6 +11,8 @@ typedef enum PrepareStatementResult
     PREPARE_SYNTAX_ERROR,
     PREPARE_UNRECOGNIZED_STATEMENT,
     PREPARE_STRING_TOO_LONG,
+    PREPARE_STRING_TOO_SHORT,
+    PREPARE_UNRECOGNIZED_DATABASE_FILE,
     PREPARE_NEGATIVE_ID
 } PrepareStatementResult;
 
@@ -19,6 +21,7 @@ typedef enum StatementType
 {
     STATEMENT_INSERT,
     STATEMENT_SELECT,
+    STATEMENT_READ,
     STATEMENT_UNRECOGNIZED
 } StatementType;
 
@@ -35,6 +38,9 @@ typedef enum ExecuteResult
     EXECUTE_TABLE_FULL, EXECUTE_SUCCESS
 } ExecuteResult;
 
+
+internal PrepareStatementResult prepare_read(InputBuffer* input_buffer, Statement* statement);
+internal ExecuteResult execute_read(Statement* statement, Table* table);
 
 internal PrepareStatementResult prepare_insert(InputBuffer* input_buffer, Statement* statement);
 internal ExecuteResult execute_insert(Statement* statement, Table* table);

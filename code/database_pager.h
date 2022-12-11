@@ -3,8 +3,6 @@
 #ifndef DATABASE_PAGER_H
 #define DATABASE_PAGER_H
 
-#include "database_package_table.h" // for TABLE_MAX_PAGES
-
 #define PAGE_SIZE KB(4)
 #define TABLE_MAX_PAGES 100
 #define ROWS_PER_PAGE ((u64)(PAGE_SIZE / PACKAGE_ROW_SIZE))
@@ -17,7 +15,12 @@
 #endif // defined(_WIN32)
 
 
-typedef struct Pager Pager;
+typedef struct Pager 
+{
+    FILE_DESCRIPTOR file_handler;
+    u64 file_size;
+    void* pages[TABLE_MAX_PAGES];
+} Pager;
 
 
 internal Pager* pager_open(const char* filename, u64* out_file_size);

@@ -1,7 +1,7 @@
 #include "database_meta_commands.h"
 #include "database_package_table.h" // for Table and free_table()
 #include "snake_game\code\snake_game.h" // for snake_game_start()
-#include "database_raylib_gui.h"
+#include "database_gui\database_raylib_gui.h"
 
 
 internal MetaCommandResult do_meta_command(InputBuffer* input_buffer, Table* table)
