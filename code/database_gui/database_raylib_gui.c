@@ -4,7 +4,7 @@
 *
 *   LICENSE: Propietary License
 *
-*   Copyright (c) 2022 venci venice. All Rights Reserved.
+*   Copyright (c) 2022 Viachaslau Ilyuk. All Rights Reserved.
 *
 *   Unauthorized copying of this file, via any medium is strictly prohibited
 *   This project is proprietary and confidential unless the owner allows
@@ -14,26 +14,28 @@
 
 #define RAYGUI_IMPLEMENTATION
 
+#include <stdlib.h>
+#include <stdio.h>
+
 #include "..\..\thirdparty\raygui\include\raygui.h"
+
+#include "..\laboratory_work\post_office.h"   // for MAX_STREET_NAME_SIZE 
+#include "..\laboratory_work\post_package.h"  // for MAX_PACKAGE_NAME_SIZE 
 
 #include "database_raygui_style.h"
 #include "database_raylib_gui.h"
 
-// #include "..\database_base_types.h"
-// #include "..\database_package_row.h"
-//#include "..\database_statement.h"
-//#include "..\database_repl.h"
+#include "..\database_package_row.h"
+#include "..\database_statement.h"
 
-
-//internal void database_gui_send_query(Statement* statement, InputBuffer* out_input_buffer);
 
 //----------------------------------------------------------------------------------
 // Controls Functions Declaration
 //----------------------------------------------------------------------------------
-static void RegisterPackageButton();                // Button: register_package_button logic
+static GuiQueryResult RegisterPackageButton(Table** table, int package_size_toggle, const char* street_name, const char* package_name);               // Button: register_package_button logic
 
 
-int raylib_start()
+int raylib_start(Table** table, GuiQueryResult* query_status_out_result)
 {
     // Initialization
     //---------------------------------------------------------------------------------------
@@ -62,9 +64,9 @@ int raylib_start()
 
     bool street_name_text_boxEditMode = false;
     bool package_name_text_boxEditMode = false;
-
-    char street_name_text_boxText[128] = "";            // TextBox: street_name_text_box
-    char package_name_text_boxText[128] = "";
+// MAX_STREET_NAME_SIZE MAX_PACKAGE_NAME_SIZE
+    char street_name_text_boxText[MAX_STREET_NAME_SIZE + 1] = "";            // TextBox: street_name_text_box
+    char package_name_text_boxText[MAX_PACKAGE_NAME_SIZE + 1] = "";
     
     bool add_office_toggleActive = false;            // Toggle: add_office_toggle
     bool add_street_toggleActive = false;            // Toggle: add_street_toggle
@@ -91,7 +93,7 @@ int raylib_start()
 
             if (GuiButton((Rectangle){ 24, 312, 432, 168 }, register_package_buttonText)) 
             {
-                RegisterPackageButton(street_name_text_boxText, package_name_text_boxText); 
+                *query_status_out_result = RegisterPackageButton(table, package_size_toggleActive, street_name_text_boxText, package_name_text_boxText); 
             }
             if (GuiTextBox((Rectangle){ 288, 48, 144, 24 }, street_name_text_boxText, 128, street_name_text_boxEditMode)) 
             {
@@ -115,6 +117,7 @@ int raylib_start()
 
         EndDrawing();
         //----------------------------------------------------------------------------------
+        *query_status_out_result = GUI_QUERY_DID_NOT_QUERY_SUCCESS;
     }
 
     // De-Initialization
@@ -129,9 +132,54 @@ int raylib_start()
 // Controls Functions Definitions (local)
 //------------------------------------------------------------------------------------
 // Button: register_package_button logic
-static void RegisterPackageButton(const char* street_name, const char* package_name)
-
+//------------------------------------------------------------------------------------
+static GuiQueryResult RegisterPackageButton(Table** table, int package_size_toggle, const char* street_name, const char* package_name)
 {
+#if defined(DB_DEBUG)
+    switch (package_size_toggle)
+    {
+        case 0:
+        {
+            fprintf(stdout, "Package size small: %d\n", package_size_toggle);
+            break;
+        }
+        case 1:
+        {
+            fprintf(stdout, "Package size medium: %d\n", package_size_toggle);
+            break;
+        }
+        case 2:
+        {
+            fprintf(stdout, "Package size large: %d\n", package_size_toggle);
+            break;
+        }
+    }
+#endif // defined(DB_DEBUG)
+    
+    Statement* database_gui_query = (Statement*)malloc(sizeof(Statement));
+    if (database_gui_query == NULL)
+    {
+        fprintf(stdout, "Query error. Unable to allocate space for query.");
+        return GUI_QUERY_ALLOC_FAILED;
+    }
+
+    database_gui_query->type = STATEMENT_INSERT;
+    database_gui_query->row_to_insert.id = 0;
+    strncpy(database_gui_query->row_to_insert.package_street, street_name, MAX_STREET_NAME_SIZE);
+    strncpy(database_gui_query->row_to_insert.package_name, package_name, MAX_PACKAGE_NAME_SIZE);
+
+    ExecuteResult execute_result = execute_statement(database_gui_query, table);
+    execute_statement_result_message(execute_result);
+    
+#if defined(DB_DEBUG)
     fprintf(stdout, "Street name: %s\n", street_name);
+    fprintf(stdout, "Street name len: %zu\n", strlen(street_name));
     fprintf(stdout, "Package name: %s\n", package_name);
+    fprintf(stdout, "Package name len: %zu\n", strlen(package_name));
+#endif // defined(DB_DEBUG)
+    
+    free(database_gui_query);
+    database_gui_query = NULL;
+    return GUI_QUERY_SUCCESS;
 }
+  

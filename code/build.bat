@@ -46,7 +46,7 @@ DEL *.lib
 DEL *.obj
 
 :: Only in release mode
-DEL *.pdb
+:: DEL *.pdb
 
 POPD
 

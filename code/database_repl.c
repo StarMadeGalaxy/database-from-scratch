@@ -48,7 +48,23 @@ internal void close_input_buffer(InputBuffer* input_buffer)
 }
 
 
-internal void guest_text()
+internal void help_text(void)
+{
+    puts("*Database from scratch command list*");
+    puts("Query database:");
+    puts("*To load or create database file, use: READ [<filename>.idb]");
+    puts("*To output table rows to stdin, use: SELECT");
+    puts("*To insert table row to the table, use: INSERT [<index>] [<package_name>] [<package_steet>]");
+    puts("\nMeta command that do not query the database:");
+    puts("*To clear the console screen, use: $cls - Windows, $clear - Linux");
+    puts("*To exit the database application, use: $exit");
+    puts("*To run GUI, use: $gui_start");
+    puts("*To play snake game, use: $ilyuk_game");
+    puts("*To see database commands, use: $help");
+}
+
+
+internal void guest_text(void)
 {
     puts("HANDMADE DATABASE FROM SCRATCH");
     puts("CREATED BY VIACHASLAU ILYUK BSUIR 022402");
@@ -58,7 +74,7 @@ internal void guest_text()
 }
 
 
-internal void print_promt()
+internal void print_promt(void)
 {
     fputs("\nilyuk_db> ", stdout);
 }

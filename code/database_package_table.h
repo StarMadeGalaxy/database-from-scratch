@@ -4,7 +4,9 @@
 #define DATABASE_PACKAGE_TABLE_H
 
 #include "database_base_types.h"
-#include "database_pager.h"
+
+
+typedef struct Pager Pager;
 
 
 typedef struct Table

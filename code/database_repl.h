@@ -4,7 +4,7 @@
 #include "database_base_types.h"
 
 
-typedef struct _InputBuffer
+typedef struct InputBuffer
 {
     char* buffer;
     size_t buffer_size;
@@ -16,11 +16,12 @@ typedef struct _InputBuffer
 } InputBuffer;
 
 
-internal InputBuffer* new_input_buffer();
+internal InputBuffer* new_input_buffer(void);
 internal void read_input(InputBuffer* input_buffer);
 internal void close_input_buffer(InputBuffer* input_buffer);
 internal void input_buffer_debug_print(InputBuffer* input_buffer);
-internal void guest_text();
-internal void print_promt();
+internal void guest_text(void);
+internal void print_promt(void);
+internal void help_text(void);
 
 #endif /* _DATABASE_REPL_H */

@@ -2,10 +2,12 @@
 #define DATABASE_CURSOR_H
 
 #include "database_base_types.h"
-#include "database_package_table.h"
 
 
-typedef struct _DbCursor
+typedef struct Table Table;
+
+
+typedef struct DbCursor
 {
     Table* table;
     u64 row_num;

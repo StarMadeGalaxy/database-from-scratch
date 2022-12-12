@@ -20,6 +20,7 @@
 
 #include "database_debug.c"
 
+
 int main(int argc, char* argv[])
 {
 #if !defined(_WIN32) && !defined(__linux__)
@@ -27,11 +28,18 @@ int main(int argc, char* argv[])
     exit(EXIT_FAILURE);
 #endif //!defined(_WIN32) && !defined(__linux__)
 
-    // if (argc < 2)
-    // {
-    //     fprintf(stderr, "Please specify the database file with .idb extension!\n");
-    //     exit(EXIT_FAILURE);
-    // }
+    if (argc >= 2)
+    {
+        if (strcmp(argv[1], "--help") == 0)
+        {
+            help_text();
+            fputc('\n', stdout);
+        }
+        else 
+        {
+            fprintf(stderr, "Unrecognized command line argument.\n");
+        }
+    }
 
 
     guest_text();
@@ -49,7 +57,7 @@ int main(int argc, char* argv[])
         
         if (input_buffer->buffer[0] == '$')
         {
-            switch (do_meta_command(input_buffer, table))
+            switch (do_meta_command(input_buffer, &table))
             {
                 case META_COMMAND_SUCCESS:
                 {

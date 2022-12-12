@@ -1,5 +1,10 @@
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "database_statement.h"
 #include "database_repl.h"
+#include "database_package_table.h"
+#include "database_package_row.h"
 #include "database_cursor.h"
 #include "database_base_types.h"
 
@@ -176,7 +181,7 @@ internal PrepareStatementResult prepare_statement(InputBuffer* input_buffer, Sta
 }
 
 
-internal ExecuteResult execute_statement(Statement* statement, Table** table)
+ExecuteResult execute_statement(Statement* statement, Table** table)
 {
     switch (statement->type)
     {
@@ -194,4 +199,32 @@ internal ExecuteResult execute_statement(Statement* statement, Table** table)
         }
     }
     return STATEMENT_UNRECOGNIZED; 
+}
+
+
+void execute_statement_result_message(ExecuteResult result)
+{
+    switch(result)
+    {
+        case EXECUTE_SUCCESS:
+        {
+            fprintf(stdout, "Executed successfully.\n");
+            break;
+        }
+        case EXECUTE_TABLE_FULL:
+        {
+            fprintf(stdout, "Error: table full.\n");
+            break;
+        }
+        case EXECUTE_DATABASE_FILE_NOT_LOADED:
+        {
+            fprintf(stderr, "Error. Database file is not loaded. Please run READ [<filename>.idb].\n");
+            break;
+        }
+        default:
+        {
+            fprintf(stderr, "Error. Execute statement unrecognized return value.\n");
+            exit(EXIT_FAILURE);
+        }
+    }
 }

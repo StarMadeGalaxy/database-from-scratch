@@ -1,8 +1,27 @@
-#ifndef DATABASE_STATEMENT_H
+#if !defined(DATABASE_STATEMENT_H)
 #define DATABASE_STATEMENT_H
 
 #include "database_base_types.h"
-#include "database_package_row.h"
+
+
+// I have extremely enormous degree of doubts about forward decalration like that
+// Should i include header instead or what?
+
+typedef struct PackageRow PackageRow;
+typedef struct InputBuffer InputBuffer;
+typedef struct Table Table;
+
+// So this is the first problem I encountered so far with forward decalaration
+// I cannot figure why i have this kind of problem. I've heard that compiler must
+// size of the PackageRow before compiling a that's the error appears, but so why
+// do everything else not give me an error?
+// Why is (typedef struct PackageRow PackageRow) not sufficient?
+// (UPDATED): So problem dissappear when I disinclude it from database_raylib_gui.c
+// and this is file is the first file being compiled. 
+// I figure out that the compiler does not know the size of PackageRow at this point. 
+// So in order to keep this file indepenent from includes (which is probably not the best idea)
+// but unfortunately I have nobody to help me with this. Shouild go back to this problem after a little
+// reasearch.
 
 
 typedef enum PrepareStatementResult
@@ -52,7 +71,9 @@ internal PrepareStatementResult prepare_select(InputBuffer* input_buffer, Statem
 internal ExecuteResult execute_select(Statement* statement, Table* table);
 
 internal PrepareStatementResult prepare_statement(InputBuffer* input_buffer, Statement* statement);
-internal ExecuteResult execute_statement(Statement* statement, Table** table);
+ExecuteResult execute_statement(Statement* statement, Table** table);
+
+void execute_statement_result_message(ExecuteResult result);
 
 
-#endif /* _DATABASE_STATEMENT_H */ 
+#endif /* !defined(DATABASE_STATEMENT_H) */ 
