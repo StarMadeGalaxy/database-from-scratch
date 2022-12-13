@@ -10,7 +10,7 @@ XCOPY /S %RL_BIN_PATH% build
 
 PUSHD build
 
-START database_entry_point.exe --help
+START database_entry_point.exe ::--help
 
 POPD
 

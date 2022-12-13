@@ -168,6 +168,12 @@ static GuiQueryResult RegisterPackageButton(Table** table, int package_size_togg
     {
         return GUI_QUERY_DATABASE_FILE_NOT_LOADED;
     }
+
+    if ((strlen(street_name) == 0) || (strlen(package_name) == 0))
+    {
+        return GUI_QUERY_INVALID_DATA;
+    }
+
     Statement* database_gui_query = (Statement*)malloc(sizeof(Statement));
     if (database_gui_query == NULL)
     {
@@ -244,6 +250,11 @@ void gui_query_message(GuiQueryResult result)
         case GUI_QUERY_EXIT:
         {
             fprintf(stderr, "Gui exited successfully.\n");
+            break;
+        }
+        case GUI_QUERY_INVALID_DATA:
+        {
+            fprintf(stderr, "Gui query error: invalid text field data.\n");
             break;
         }
     }
