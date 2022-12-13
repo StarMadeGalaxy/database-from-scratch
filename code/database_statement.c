@@ -152,7 +152,7 @@ internal ExecuteResult execute_select(Statement* statement, Table* table)
     {
         deserialize_package_row(cursor_value(cursor), &row);
         print_package_row(&row);
-        cursor_advance(cursor);
+        cursor_advance(cursor, 1);
         debug_cursor_start(cursor);
     }
     
@@ -213,7 +213,7 @@ void execute_statement_result_message(ExecuteResult result)
         }
         case EXECUTE_TABLE_FULL:
         {
-            fprintf(stdout, "Error: table full.\n");
+            fprintf(stderr, "Error: table full.\n");
             break;
         }
         case EXECUTE_DATABASE_FILE_NOT_LOADED:

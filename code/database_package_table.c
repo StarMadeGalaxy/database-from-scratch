@@ -47,7 +47,7 @@ internal void debug_close_table(Table* table)
     fprintf(stdout, "\n+Closing table-\n");
     fprintf(stdout, "|Number of rows in the current table: %llu\n", table->num_rows);
     fprintf(stdout, "+--------------------------------------------+\n");
-    system("PAUSE");
+    system("PAUSE");r
 #endif // defined(DB_MODE)
 }
 

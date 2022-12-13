@@ -22,21 +22,29 @@
 #include "..\laboratory_work\post_office.h"   // for MAX_STREET_NAME_SIZE 
 #include "..\laboratory_work\post_package.h"  // for MAX_PACKAGE_NAME_SIZE 
 
+#include "..\database_base_types.h"
+#include "..\database_cursor.h"
+#include "..\database_package_table.h"
+#include "..\database_package_row.h"
+#include "..\database_statement.h"
+
 #include "database_raygui_style.h"
 #include "database_raylib_gui.h"
 
-#include "..\database_package_row.h"
-#include "..\database_statement.h"
 
 
 //----------------------------------------------------------------------------------
 // Controls Functions Declaration
 //----------------------------------------------------------------------------------
 static GuiQueryResult RegisterPackageButton(Table** table, int package_size_toggle, const char* street_name, const char* package_name);               // Button: register_package_button logic
+internal u64 db_get_last_index(Table* table);
+
 
 
 int raylib_start(Table** table, GuiQueryResult* query_status_out_result)
 {
+    *query_status_out_result = GUI_QUERY_DID_NOT_QUERY_SUCCESS;
+
     // Initialization
     //---------------------------------------------------------------------------------------
     int screenWidth = 936;
@@ -94,6 +102,7 @@ int raylib_start(Table** table, GuiQueryResult* query_status_out_result)
             if (GuiButton((Rectangle){ 24, 312, 432, 168 }, register_package_buttonText)) 
             {
                 *query_status_out_result = RegisterPackageButton(table, package_size_toggleActive, street_name_text_boxText, package_name_text_boxText); 
+                gui_query_message(*query_status_out_result);
             }
             if (GuiTextBox((Rectangle){ 288, 48, 144, 24 }, street_name_text_boxText, 128, street_name_text_boxEditMode)) 
             {
@@ -117,13 +126,13 @@ int raylib_start(Table** table, GuiQueryResult* query_status_out_result)
 
         EndDrawing();
         //----------------------------------------------------------------------------------
-        *query_status_out_result = GUI_QUERY_DID_NOT_QUERY_SUCCESS;
     }
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
     CloseWindow();        // Close window and OpenGL context
     MinimizeWindow();
+    *query_status_out_result = GUI_QUERY_EXIT;
     //--------------------------------------------------------------------------------------
     return 0;
 }
@@ -155,7 +164,10 @@ static GuiQueryResult RegisterPackageButton(Table** table, int package_size_togg
         }
     }
 #endif // defined(DB_DEBUG)
-    
+    if (*table == NULL)
+    {
+        return GUI_QUERY_DATABASE_FILE_NOT_LOADED;
+    }
     Statement* database_gui_query = (Statement*)malloc(sizeof(Statement));
     if (database_gui_query == NULL)
     {
@@ -164,7 +176,7 @@ static GuiQueryResult RegisterPackageButton(Table** table, int package_size_togg
     }
 
     database_gui_query->type = STATEMENT_INSERT;
-    database_gui_query->row_to_insert.id = 0;
+    database_gui_query->row_to_insert.id = db_get_last_index(*table);
     strncpy(database_gui_query->row_to_insert.package_street, street_name, MAX_STREET_NAME_SIZE);
     strncpy(database_gui_query->row_to_insert.package_name, package_name, MAX_PACKAGE_NAME_SIZE);
 
@@ -183,3 +195,56 @@ static GuiQueryResult RegisterPackageButton(Table** table, int package_size_togg
     return GUI_QUERY_SUCCESS;
 }
   
+
+// used to insert row from gui
+internal u64 db_get_last_index(Table* table)
+{
+    if (table == NULL)
+    {
+        return 0;
+    }
+    if (table->num_rows == 0)
+    {
+        return 0;
+    }
+
+    DbCursor* end_cursor = table_end(table);
+    PackageRow last_row;
+    cursor_advance(end_cursor, -1);
+    deserialize_package_row(cursor_value(end_cursor), &last_row);
+    free(end_cursor);
+    return last_row.id + 1;
+}
+
+
+void gui_query_message(GuiQueryResult result)
+{
+    switch(result)
+    {
+        case GUI_QUERY_ALLOC_FAILED:
+        {
+            fprintf(stderr, "Gui query error: allocation failed.\n");
+            break;
+        }
+        case GUI_QUERY_SUCCESS:
+        {
+            fprintf(stdout, "Gui query success.\n");
+            break;
+        }
+        case GUI_QUERY_DID_NOT_QUERY_SUCCESS:
+        {
+            fprintf(stderr, "Gui did not query success.\n");
+            break;
+        }
+        case GUI_QUERY_DATABASE_FILE_NOT_LOADED:
+        {
+            fprintf(stderr, "Gui query error: database file is not loaded.\n");
+            break;
+        }
+        case GUI_QUERY_EXIT:
+        {
+            fprintf(stderr, "Gui exited successfully.\n");
+            break;
+        }
+    }
+}

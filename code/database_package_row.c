@@ -22,7 +22,7 @@ internal void serialize_package_row(PackageRow* source, void* destination)
 }
 
 
-internal void deserialize_package_row(void* source, PackageRow* destination)
+void deserialize_package_row(void* source, PackageRow* destination)
 {
     memcpy((void*)(&destination->id), (void*)((u8*)source + PACKAGE_ID_OFFSET), PACKAGE_ID_SIZE);
     strncpy(destination->package_name, (u8*)source + PACKAGE_NAME_OFFSET, PACKAGE_NAME_SIZE);

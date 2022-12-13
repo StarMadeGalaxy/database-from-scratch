@@ -23,8 +23,9 @@ internal MetaCommandResult do_meta_command(InputBuffer* input_buffer, Table** ta
     }
     else if (strcmp(input_buffer->buffer, "$gui_start") == 0)
     {
-        GuiQueryResult gui_query_result;    // TODO: handle errors
+        GuiQueryResult gui_query_result; 
         raylib_start(table, &gui_query_result);
+        gui_query_message(gui_query_result);
         return META_COMMAND_SUCCESS;
     }
     else if (strcmp(input_buffer->buffer, "$help") == 0)

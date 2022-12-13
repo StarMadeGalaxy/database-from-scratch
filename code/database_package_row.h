@@ -26,7 +26,7 @@ typedef struct PackageRow
 
 internal void print_package_row(PackageRow* row);
 internal void serialize_package_row(PackageRow* source, void* destination);
-internal void deserialize_package_row(void* source, PackageRow* destination);
+void deserialize_package_row(void* source, PackageRow* destination);
 
 
 #endif // !defined(DATABASE_PACKAGE_ROW_H)

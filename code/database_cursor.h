@@ -16,9 +16,9 @@ typedef struct DbCursor
 
 
 internal DbCursor* table_start(Table* table);
-internal DbCursor* table_end(Table* table);
-internal void* cursor_value(DbCursor* cursor);
-internal void cursor_advance(DbCursor* cursor);
+DbCursor* table_end(Table* table);
+void* cursor_value(DbCursor* cursor);
+void cursor_advance(DbCursor* cursor, i64 offset);
 
 
 #endif //!defined(DATABASE_CURSOR_H)

@@ -15,7 +15,7 @@ internal DbCursor* table_start(Table* table)
 }
 
 
-internal DbCursor* table_end(Table* table)
+DbCursor* table_end(Table* table)
 {
     DbCursor* cursor = (DbCursor*)malloc(sizeof(DbCursor));
     cursor->table = table;
@@ -26,7 +26,7 @@ internal DbCursor* table_end(Table* table)
 }
 
 
-internal void* cursor_value(DbCursor* cursor)
+void* cursor_value(DbCursor* cursor)
 {
     u64 row_num = cursor->row_num;
     u64 page_num = row_num / ROWS_PER_PAGE;
@@ -37,9 +37,14 @@ internal void* cursor_value(DbCursor* cursor)
 }
 
 
-internal void cursor_advance(DbCursor* cursor)
+void cursor_advance(DbCursor* cursor, i64 offset)
 {
-    cursor->row_num += 1;
+    cursor->row_num += offset;
+
+    if (cursor->row_num < 0) 
+    {
+        cursor->row_num = 0;
+    }
 
     if (cursor->row_num >= cursor->table->num_rows)
     {
